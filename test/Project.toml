@@ -1,3 +1,10 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+Mocking = "78c3b35d-d492-501b-9361-3d52fe80e533"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

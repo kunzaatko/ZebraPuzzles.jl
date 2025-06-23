@@ -1,5 +1,21 @@
 module ZebraPuzzles
+using Reexport, DataFrames, PrettyTables, Satisfiability, Tables, Random, InterfaceFunctions
+@reexport using InvertedIndices
+import InvertedIndices: Not
+using Mocking: @mock # NOTE: Used for `PrettyTables.pretty_table` to fix the available width <10-06-25> 
+using Base: Pairs
 
-# Write your package code here.
+include("attributes.jl")
+include("clues.jl")
+include("phrases.jl")
 
+include("zebra-puzzle.jl")
+include("solved-zebra-puzzles.jl")
+include("unsolved-zebra-puzzles.jl")
+
+include("random.jl")
+include("puzzles.jl")
+
+export ZebraPuzzle,
+    add_clues!, add_clue!, attributes, riddle, UnsolvedZebraPuzzle, nclue, nattr
 end
