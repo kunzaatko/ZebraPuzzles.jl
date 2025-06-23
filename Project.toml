@@ -1,0 +1,7 @@
+name = "ZebraPuzzles"
+uuid = "ea4507f1-c7b4-4539-82f8-989db771b95d"
+authors = ["Martin Kunz <martinkunz@email.cz> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.11"
