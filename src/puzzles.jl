@@ -59,7 +59,7 @@ This is the famous zebra puzzle that gave zebra puzzles their name. It is said t
 
 ```jldoctest
 julia> ZP.EINSTEINS_ZEBRA
-ZebraPuzzles.SolvedZebraPuzzle{5, 5, Tuple{House, Nationality, Drink, Smoke, Pet}} with 14 clues
+SolvedZebraPuzzle{5, 5, Tuple{House, Nationality, Drink, Smoke, Pet}} with 14 clues
 ┌──────────────────────────────────────────────────────────┐
 │ House   Nationality      Smoke         Drink       Pet   │
 ├──────────────────────────────────────────────────────────┤

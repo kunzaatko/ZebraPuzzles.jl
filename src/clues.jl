@@ -1,6 +1,10 @@
 # TODO: Add a print styled function that discerns the subject and the attribute with colours and leaves the fillers
 # non-colourful <30-05-25> 
 
+"""
+    Clue
+Supertype of any clue (`DirectClue`, `PositionClue`, etc.) for a `ZebraPuzzle`.
+"""
 abstract type Clue end
 
 """

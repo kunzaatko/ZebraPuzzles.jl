@@ -208,7 +208,7 @@ julia> ZP.issolved(z)
 false
 
 julia> solve!(z);
-ZebraPuzzles.SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
+SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
 ┌──────────────────────────────────────────────────────────┐
 │    Drink      House   Nationality   Pet        Smoke     │
 ├──────────────────────────────────────────────────────────┤
@@ -280,7 +280,7 @@ See also [`show_solution`](@ref)
 julia> puz = ZP.UNSOLVED_EINSTEINS_ZEBRA |> deepcopy;
 
 julia> solve!(puz);
-ZebraPuzzles.SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
+SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
 ┌──────────────────────────────────────────────────────────┐
 │    Drink      House   Nationality   Pet        Smoke     │
 ├──────────────────────────────────────────────────────────┤

@@ -29,7 +29,7 @@ julia> ZebraPuzzle(
            (Person("Lucas"), Hat("cap"), Nationality("german")),
            (Person("Lucy"), Hat("baret"), Nationality("american"))
        )
-ZebraPuzzles.SolvedZebraPuzzle{4, 3, Tuple{Person, Hat, Nationality}} with no clues
+SolvedZebraPuzzle{4, 3, Tuple{Person, Hat, Nationality}} with no clues
 ┌─────────────────────────────┐
 │ Nationality   Hat    Person │
 ├─────────────────────────────┤

@@ -63,8 +63,8 @@ end
             kwargs...
         ) = pretty_table(io, df; kwargs..., display_size=(0, 92))
 
-        # NOTE: Better than doc-testing in `make.jl` because, I can track the coverage
-        # NOTE: When updating, must update also in `docs/make.jl` <30-05-25> 
+        # NOTE: Better than doc-testing in `../docs/make.jl` because, I can track the coverage
+        # NOTE: When updating, must update also in `../docs/make.jl` <30-05-25> 
         DocMeta.setdocmeta!(ZebraPuzzles, :DocTestSetup, :(
                 include(joinpath(@__DIR__, "doctestsetup.jl"));
                 # NOTE: Not necessary in `docs/make.jl`. `@warn` should work there <30-05-25> 

@@ -16,6 +16,6 @@ include("unsolved-zebra-puzzles.jl")
 include("random.jl")
 include("puzzles.jl")
 
-export ZebraPuzzle,
-    add_clues!, add_clue!, attributes, riddle, UnsolvedZebraPuzzle, nclue, nattr
+export SolvedZebraPuzzle, UnsolvedZebraPuzzle
+export ZebraPuzzle, add_clues!, add_clue!, attributes, riddle, nclue, nattr
 end

@@ -436,7 +436,7 @@ See also [`add_clues!`](@ref)
 julia> z = ZP.SIMPLE_ZEBRA |> deepcopy;
 
 julia> add_clue!(z, Clue(House("green"), Smoke("Parliaments")))
-ZebraPuzzles.SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 1 clues
+SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 1 clues
 ┌────────────────────────────────────────────────┐
 │ House  Nationality     Smoke         Drink     │
 ├────────────────────────────────────────────────┤
@@ -466,7 +466,7 @@ Adds a randomly generated clue to the `ZebraPuzzle` `z`.
 julia> z = ZP.SIMPLE_ZEBRA |> deepcopy;
 
 julia> add_clue!(z)
-ZebraPuzzles.SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 1 clues
+SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 1 clues
 ┌────────────────────────────────────────────────┐
 │ House  Nationality     Smoke         Drink     │
 ├────────────────────────────────────────────────┤
@@ -501,7 +501,7 @@ julia> add_clues!(z, [
             Clue(House("red"), Smoke("Old Gold")),
             Clue(Nationality("Spaniard"), Drink("orange juice"))
         ])
-ZebraPuzzles.SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 2 clues
+SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with 2 clues
 ┌────────────────────────────────────────────────┐
 │ House  Nationality     Smoke         Drink     │
 ├────────────────────────────────────────────────┤
@@ -553,18 +553,22 @@ function Base.showerror(io::IO, e::UnsolvablePuzzle)
 end
 
 """
-    riddlestring(puzzle; <kwargs>)
-Generate the riddle for the puzzle and return it as a string.
+    riddle(puzzle::ZebraPuzzle; <kwargs>)
+Return the string of the zebra puzzle introduction and clues in natural language.
+
+The string uses markdown for bullet points or numbers and prints the Markdown using the context IO.
 
 If `introduction=false` is (default `true`) the introduction such as `"There are five houses."` is skipped.
 If `bulletpoints=true`, the clues are prefixed with `"- "` and if `numbers=true` the clues are prefixed with `"i)"`. If both are `false` the clues only have a space between them.
+
+See also [`solve!`](@ref)
 """
-function riddlestring(
-    puzzle::ZebraPuzzle{K}; numbers=false, bulletpoints=!numbers, introduction=true
-) where {K}
+function riddle(
+    puzzle::ZebraPuzzle; numbers=false, bulletpoints=!numbers, introduction=true
+)
     mainsubject = attrtypes(puzzle)[findfirst(a -> a <: Subject, attrtypes(puzzle))]
     has_unique_solution(puzzle) || throw(UnsolvablePuzzle(Ref(puzzle)))
-    riddle = introduction ? introductionstring(mainsubject, K) * "\n" : ""
+    riddle_string = introduction ? introductionstring(mainsubject, K) * "\n" : ""
     for (i, c) in enumerate(puzzle.clues)
         prefix = if bulletpoints
             "- "
@@ -573,22 +577,10 @@ function riddlestring(
         else
             ""
         end
-        riddle *= prefix * phrase(c) * "\n"
+        riddle_string *= prefix * phrase(c) * "\n"
     end
-    return riddle
-end
-
-"""
-    riddle(puzzle::ZebraPuzzle; <kwargs>)
-Print the zebra puzzle riddle.
-
-The key words are the ones supported by `riddlestring`
-
-See also: [`riddlestring`](@ref)
-"""
-function riddle(puzzle::ZebraPuzzle; kwargs...)
-    print(Markdown.parse(riddlestring(puzzle; kwargs...)))
-    return nothing
+    print(Markdown.parse(riddle_string))
+    return riddle_string
 end
 
 for func in (:(==), :isequal)
