@@ -1,3 +1,9 @@
+"""
+    PositionClue <: Clue
+A clue about the position of a subject with a specific attribute or the relation of the positions of a pair of subjects. 
+
+Direct subtypes are [`AbsolutePosition`](@ref), [`RelativePosition`](@ref)
+"""
 abstract type PositionClue <: Clue end
 
 @enum Position p_first p_middle p_last
@@ -11,6 +17,10 @@ function Base.string(p::Position)
     end
 end
 
+"""
+    AbsolutePosition{A,P} <: PositionClue 
+A clue that states the absolute position `p::P` of a subject with the attribute `a::A`.
+"""
 struct AbsolutePosition{A,P} <: PositionClue
     a::A
     p::P
@@ -24,12 +34,22 @@ function Base.repr(c::AbsolutePosition)
            "($(repr(c.a)), $(repr(c.p))$(c.K === missing ? ", $(c.K)" : ""))"
 end
 
+"""
+    RelativePosition{A,B} <: PositionClue
+A clue about the relationship of the positions of two subjects with the attributes `a::A` and `b::B`.
+
+Direct subtypes are [`ExactRelativePosition`](@ref), [`DirectionClue`](@ref)
+"""
 abstract type RelativePosition{A,B} <: PositionClue end
 
 @enum Direction d_left d_right
 Base.string(d::Direction) = d === d_left::Direction ? "left" : "right"
 direction(r::Int) = sign(r) == 1 ? d_right : d_left
 
+"""
+    ExactRelativePosition{A,B,D} <: RelativePosition{A,B}
+A clue that states "`a::A` is `r::Int` places in the direction of `d::D` from `b::B`".
+"""
 struct ExactRelativePosition{A,B,D} <: RelativePosition{A,B}
     a::A
     b::B

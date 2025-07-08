@@ -1,7 +1,7 @@
-@enum ClueType::Bool ct_negative ct_possitive 
+@enum ClueType::Bool ct_negative ct_possitive
 """
     DirectClue <: Clue
-A direct relationship of two attributes. I.e. [`PossitiveClue`](@ref) if they belong together or [`NegativeClue`](@ref) if they dont.
+A direct relationship of two attributes. I.e. [`PositiveClue`](@ref) if they belong together or [`NegativeClue`](@ref) if they dont.
 """
 struct DirectClue{S,A<:Attribute,B<:Attribute} <: Clue
     a::A

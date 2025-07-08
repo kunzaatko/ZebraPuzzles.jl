@@ -53,7 +53,7 @@ function ZebraPuzzle(z1::Attrs, zns::Vararg{Attrs}) where {Attrs<:Attributes}
     return SolvedZebraPuzzle{K,N,Attrs}(df, Clue[])
 end
 
-function ZebraPuzzle(solution_table::DataFrame, clues::Vector{Clue})
+function ZebraPuzzle(solution_table::DataFrame, clues::Vector{Clue}=Clue[])
     K, N = nrow(solution_table), ncol(solution_table)
     @assert all(allunique(string(a) for a in attrs) for attrs in eachcol(solution_table)) "All attributes of a single type must be unique"
     Attrs = Tuple{(eltype(a) for a in eachcol(solution_table))...}
@@ -122,12 +122,16 @@ function attributes(z::SolvedZebraPuzzle, s::Not{<:Attribute})
     return stack(eachcol(subject))[:]
 end
 
-function Base.show(io::IO, ::MIME"text/plain", z::SolvedZebraPuzzle)
+function Base.show(io::IO, ::MIME"text/plain", z::SolvedZebraPuzzle; cluenumber=true)
     Base.showarg(io, z, true)
-    if isempty(z.clues)
-        print(io, " with no clues\n")
+    if cluenumber
+        if isempty(z.clues)
+            print(io, " with no clues\n")
+        else
+            print(io, " with $(length(z.clues)) clues\n")
+        end
     else
-        print(io, " with $(length(z.clues)) clues\n")
+        print(io, "\n")
     end
     @mock pretty_table(
         io,

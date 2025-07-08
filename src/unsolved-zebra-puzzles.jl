@@ -208,36 +208,6 @@ julia> ZP.issolved(z)
 false
 
 julia> solve!(z);
-SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
-┌──────────────────────────────────────────────────────────┐
-│    Drink      House   Nationality   Pet        Smoke     │
-├──────────────────────────────────────────────────────────┤
-│    water      yellow   Norwegian    fox        Kools     │
-├──────────────────────────────────────────────────────────┤
-│     tea        blue    Ukrainian   horse   Chesterfields │
-├──────────────────────────────────────────────────────────┤
-│     milk       red    Englishman   snails    Old Gold    │
-├──────────────────────────────────────────────────────────┤
-│ orange juice  ivory    Spaniard     dog    Lucky Strike  │
-├──────────────────────────────────────────────────────────┤
-│    coffee     green    Japanese    zebra    Parliaments  │
-└──────────────────────────────────────────────────────────┘
-
-clues:
-1) Nationality("Englishman") ⟹ House("red")
-2) Nationality("Spaniard") ⟹ Pet("dog")
-3) Drink("coffee") ⟹ House("green")
-4) Nationality("Ukrainian") ⟹ Drink("tea")
-5) Pos[House("green")] == Pos[House("ivory")] + 1
-6) Smoke("Old Gold") ⟹ Pet("snails")
-7) Smoke("Kools") ⟹ House("yellow")
-8) Pos[Drink("milk")] == 3
-9) Pos[Nationality("Norwegian")] == 1
-10) abs(Pos[Smoke("Chesterfields")] - Pos[Pet("fox")]) == 1
-11) abs(Pos[Smoke("Kools")] - Pos[Pet("horse")]) == 1
-12) Smoke("Lucky Strike") ⟹ Drink("orange juice")
-13) Nationality("Japanese") ⟹ Smoke("Parliaments")
-14) abs(Pos[Nationality("Norwegian")] - Pos[House("blue")]) == 1
 
 julia> ZP.issolved(z)
 true
@@ -264,7 +234,7 @@ If the puzzle was solved by `solve!`, converts the puzzle to a [`SolvedZebraPuzz
 """
 function show_solution(puzzle::UnsolvedZebraPuzzle)
     if issolved(puzzle)
-        show(stdout, MIME("text/plain"), ZebraPuzzle(puzzle.table, puzzle.clues))
+        show(stdout, MIME("text/plain"), ZebraPuzzle(puzzle.table); cluenumber=false)
     else
         throw(UnsolvedPuzzle(Ref(puzzle)))
     end
@@ -280,7 +250,9 @@ See also [`show_solution`](@ref)
 julia> puz = ZP.UNSOLVED_EINSTEINS_ZEBRA |> deepcopy;
 
 julia> solve!(puz);
-SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 14 clues
+
+julia> puz |> ZP.show_solution
+SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}}
 ┌──────────────────────────────────────────────────────────┐
 │    Drink      House   Nationality   Pet        Smoke     │
 ├──────────────────────────────────────────────────────────┤
@@ -294,22 +266,6 @@ SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}} with 
 ├──────────────────────────────────────────────────────────┤
 │    coffee     green    Japanese    zebra    Parliaments  │
 └──────────────────────────────────────────────────────────┘
-
-clues:
-1) Nationality("Englishman") ⟹ House("red")
-2) Nationality("Spaniard") ⟹ Pet("dog")
-3) Drink("coffee") ⟹ House("green")
-4) Nationality("Ukrainian") ⟹ Drink("tea")
-5) Pos[House("green")] == Pos[House("ivory")] + 1
-6) Smoke("Old Gold") ⟹ Pet("snails")
-7) Smoke("Kools") ⟹ House("yellow")
-8) Pos[Drink("milk")] == 3
-9) Pos[Nationality("Norwegian")] == 1
-10) abs(Pos[Smoke("Chesterfields")] - Pos[Pet("fox")]) == 1
-11) abs(Pos[Smoke("Kools")] - Pos[Pet("horse")]) == 1
-12) Smoke("Lucky Strike") ⟹ Drink("orange juice")
-13) Nationality("Japanese") ⟹ Smoke("Parliaments")
-14) abs(Pos[Nationality("Norwegian")] - Pos[House("blue")]) == 1
 ```
 """
 function solve!(puzzle::UnsolvedZebraPuzzle)
@@ -321,7 +277,6 @@ function solve!(puzzle::UnsolvedZebraPuzzle)
     foreach(attributes(puzzle)) do a
         puzzle.table[value(exprs[a]), col(a)] = a
     end
-    show_solution(puzzle)
     return puzzle
 end
 
