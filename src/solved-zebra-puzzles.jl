@@ -18,7 +18,7 @@ end
 const Attributes = Tuple{Attribute,Vararg{Attribute}}
 
 """
-    ZebraPuzzle(subject_attrs...)::SolvedZebraPuzzle
+    ZebraPuzzle(linked_attributes...)::SolvedZebraPuzzle
 Construct a solved zebra puzzle with the solution table `zpairs` with no clues. Clues can be later added by
 [`add_clues!`](@ref).
 
@@ -51,6 +51,11 @@ function ZebraPuzzle(z1::Attrs, zns::Vararg{Attrs}) where {Attrs<:Attributes}
     df = DataFrame(Tables.dictcolumntable(cols))
     @assert all(allunique(string(a) for a in attrs) for attrs in eachcol(df)) "All attributes of a single type must be unique"
     return SolvedZebraPuzzle{K,N,Attrs}(df, Clue[])
+end
+function ZebraPuzzle(a1::Attributes, as::Vararg{Attributes})
+    return ZebraPuzzle(
+        map(a -> Tuple(sort(collect(a); by=(string ∘ typeof))), (a1, as...))...
+    )
 end
 
 function ZebraPuzzle(solution_table::DataFrame, clues::Vector{Clue}=Clue[])

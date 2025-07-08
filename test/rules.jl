@@ -1,3 +1,5 @@
+## "rules" ##
+
 using ZebraPuzzles.Satisfiability
 using ZebraPuzzles: ZebraPuzzles as ZP
 

@@ -24,7 +24,7 @@ end
 const AttributeVariants = Pair{<:Type,<:Tuple{Attribute,Vararg{Attribute}}}
 
 """
-    ZebraPuzzle(attr_variants...)
+    ZebraPuzzle(attribute_variants...)::UnsolvedZebraPuzzle
 Construct an unsolved zebra puzzle. The puzzle holds the variants of the attributes and a solution table with missing
 values. Clues can be later added by [`add_clues!`](@ref).
 

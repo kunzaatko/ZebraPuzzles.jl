@@ -1,3 +1,5 @@
+## "show" ##
+
 using Random
 using ZebraPuzzles: ZebraPuzzles as ZP
 

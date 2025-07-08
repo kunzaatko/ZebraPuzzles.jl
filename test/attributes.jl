@@ -1,3 +1,5 @@
+## "attributes" ##
+
 using ZebraPuzzles: ZebraPuzzles as ZP
 
 @test ZP.check_attrtype(ZP.EINSTEINS_ZEBRA, House("yellow"))

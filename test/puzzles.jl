@@ -1,3 +1,5 @@
+## "puzzles" ##
+
 using ZebraPuzzles: ZebraPuzzles as ZP
 
 z = deepcopy(ZP.EINSTEINS_ZEBRA)
