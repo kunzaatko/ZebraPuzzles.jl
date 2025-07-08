@@ -3,7 +3,7 @@
       position assertion. Some of the positions will end up valid and some would be non-stable and allow multiple
       solutions.
     - Issue with the possible permutations that are not stable but some attributes still belong together.
-- [`InteractiveSolver`](@extref): Optimizations that are 
+- [`InteractiveSolver`](@extref Satisfiability :std:label:`Interactive-solving`): Optimizations that are 
     - Store the `InteractiveSolver` in the puzzle and avoid constructing the satisfiability problem from the beginning
       each time.
 - `IncompletePuzzle <: PuzzleError` <-> `check_complete`:  Check whether the puzzle clues contain all the attributes

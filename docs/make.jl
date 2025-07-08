@@ -26,6 +26,7 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "API Reference" => "reference.md",
     ],
     plugins=[bib, links],
     doctest=false # tests run in `test/runtests.jl`
