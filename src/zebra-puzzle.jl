@@ -564,8 +564,8 @@ If `bulletpoints=true`, the clues are prefixed with `"- "` and if `numbers=true`
 See also [`solve!`](@ref)
 """
 function riddle(
-    puzzle::ZebraPuzzle; numbers=false, bulletpoints=!numbers, introduction=true
-)
+    puzzle::ZebraPuzzle{K}; numbers=false, bulletpoints=!numbers, introduction=true
+) where {K}
     mainsubject = attrtypes(puzzle)[findfirst(a -> a <: Subject, attrtypes(puzzle))]
     has_unique_solution(puzzle) || throw(UnsolvablePuzzle(Ref(puzzle)))
     riddle_string = introduction ? introductionstring(mainsubject, K) * "\n" : ""
