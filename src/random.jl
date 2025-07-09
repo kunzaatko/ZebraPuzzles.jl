@@ -98,12 +98,12 @@ end
 accumsubtypes(T::Type) = accumsubtypes!(T, Type[], Type[])
 
 """
-    Random.rand(UnsolvedZebraPuzzle, K::Int, N::Int; clues=true)
+    Random.rand(UnsolvedZebraPuzzle{K,N}; clues=true)
 Generate a random unsolved zebra puzzle with `K` subjects each of which has `N` attributes.
 
 If `clues` is `true`, the puzzle is filled with a minimal set of random clues ensuring that it is solvable.
 """
-function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true)
+function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true) where {K,N}
     attrs = [rand([House, Person])] # main attribute
     append!(
         attrs, first(shuffle(filter(k -> !in(k, attrs), accumsubtypes(Attribute))), K - 1)
@@ -122,4 +122,7 @@ function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true)
     @info "Generating clues…"
     clues && fill_clues!(puzzle)
     return puzzle
+end
+function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true)
+    return rand(UnsolvedZebraPuzzle{K,N}; clues)
 end
