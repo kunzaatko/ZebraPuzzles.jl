@@ -22,7 +22,7 @@ julia> attributes(ZP.EINSTEINS_ZEBRA.clues[1])
 ```
 """
 @interface attributes(c::Clue)
-@interface phrase(c::Clue)
+@interface phrase(c::Clue)::String
 
 include("clues/position-clue.jl")
 include("clues/direct-clue.jl")
@@ -30,4 +30,10 @@ include("clues/direct-clue.jl")
 const PairClue = Union{<:DirectClue,<:RelativePosition}
 Base.Pair(c::PairClue) = c.a => c.b
 
-export PositiveClue, NegativeClue, ExactRelativePosition, AbsolutePosition, AbsoluteDistance, DirectionClue, Clue
+export PositiveClue,
+    NegativeClue,
+    ExactRelativePosition,
+    AbsolutePosition,
+    AbsoluteDistance,
+    DirectionClue,
+    Clue

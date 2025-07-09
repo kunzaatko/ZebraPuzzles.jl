@@ -11,37 +11,46 @@ julia> ZP.titlecase("apple")
 ```
 """
 function titlecase(s::String)
-    uppercase(s[1]) * s[2:end]
+    return uppercase(s[1]) * s[2:end]
 end
 
 function phrase(c::PositiveClue)
-    a,b = attributes(c)
+    a, b = attributes(c)
     if a isa House
-        b,a = a,b
+        b, a = a, b
     end
-    titlecase(rand(attributed(a))) * " " * rand(attribution(b)) * "."
+    return titlecase(rand(attributed(a))) * " " * rand(attribution(b)) * "."
 end
 function phrase(c::NegativeClue)
-    a,b = attributes(c)
+    a, b = attributes(c)
     if a isa House
-        b,a = a,b
+        b, a = a, b
     end
-    titlecase(rand(attributed(a))) * " " * rand(negation(b)) * "."
+    return titlecase(rand(attributed(a))) * " " * rand(negation(b)) * "."
 end
 
 phrase(d::Direction) = d_left == d ? "to the left" : "to the right"
 function phrase(c::ExactRelativePosition{<:Any,<:Any,D}) where {D}
-    a,b = attributes(c)
+    a, b = attributes(c)
     verb = a isa House ? "is" : "lives"
     attributed_string = a isa House ? rand(attributed_position(b)) : rand(attributed(b))
-    position_phrase = c.r == 1 ? "$verb immediately $(phrase(D)) of" : "$verb $(abs(c.r)) places $(phrase(D)) from"
-    titlecase(rand(attributed(a))) * " " * position_phrase * " " * attributed_string * "."
+    position_phrase = if c.r == 1
+        "$verb immediately $(phrase(D)) of"
+    else
+        "$verb $(abs(c.r)) places $(phrase(D)) from"
+    end
+    return titlecase(rand(attributed(a))) *
+           " " *
+           position_phrase *
+           " " *
+           attributed_string *
+           "."
 end
 
 function phrase(c::AbsolutePosition)
     position_phrase(p, K) = begin
         if !ismissing(K)
-            2*(p - 1) == (K-1) && return "middle"
+            2 * (p - 1) == (K - 1) && return "middle"
             p == K && return "last"
         end
         p == 1 && return "first"
@@ -52,20 +61,35 @@ function phrase(c::AbsolutePosition)
         p >= 6 && return "$(p)th"
     end
     verb, noun = c.a isa House ? ("is", "position") : ("lives", "house")
-    titlecase(rand(attributed(c.a))) * " $verb in the " * position_phrase(c.p, c.K) * " $noun."
+    return titlecase(rand(attributed(c.a))) *
+           " $verb in the " *
+           position_phrase(c.p, c.K) *
+           " $noun."
 end
 
 function phrase(c::AbsoluteDistance)
     verb = c.a isa House ? "is" : "lives"
     position_phrase = c.d == 1 ? "immediately next to " : "$(c.d) places from "
-    attributed_string = c.a isa House ? rand(attributed_position(c.b)) : rand(attributed(c.b))
-    titlecase(rand(attributed(c.a))) * " $verb $position_phrase"  * attributed_string * "."
+    attributed_string =
+        c.a isa House ? rand(attributed_position(c.b)) : rand(attributed(c.b))
+    return titlecase(rand(attributed(c.a))) *
+           " $verb $position_phrase" *
+           attributed_string *
+           "."
 end
 
 function phrase(c::DirectionClue{<:Any,<:Any,D}) where {D}
     verb = c.a isa House ? "is" : "lives"
-    attributed_phrase = c.a isa House ? rand(attributed_position(c.b)) : rand(attributed(c.b))
-    titlecase(rand(attributed(c.a))) *" "*  verb* " "* phrase(D) * " of " * attributed_phrase * "."
+    attributed_phrase =
+        c.a isa House ? rand(attributed_position(c.b)) : rand(attributed(c.b))
+    return titlecase(rand(attributed(c.a))) *
+           " " *
+           verb *
+           " " *
+           phrase(D) *
+           " of " *
+           attributed_phrase *
+           "."
 end
 
 # The Englishman | LIVES IN | the red house.
