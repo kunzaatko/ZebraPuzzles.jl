@@ -1,14 +1,14 @@
-# ZebraPuzzles.jl
-Welcome to the documentation for [`ZebraPuzzles.jl`](https://github.com/kunzaatko/ZebraPuzzles.jl)! 🦓
+# ZebraPuzzles.jl 🦓
+Welcome to the documentation for [`ZebraPuzzles.jl`](https://github.com/kunzaatko/ZebraPuzzles.jl)!
 
 `ZebraPuzzles` is a Julia package for the [logical puzzles of the zebra type](https://en.wikipedia.org/wiki/Zebra_Puzzle). It provides a framework for [defining
 puzzles](@ref "Defining a Puzzle"), [adding clues](@ref "Adding Clues") about the puzzle, and [finding a solution](@ref
 "Solving the Puzzle") which satisfies the clues.
 
-## Getting Started
+## Getting Started 🚀
 To get started, you'll need to define a puzzle. A puzzle is defined by a set of attributes and a set of clues.
 
-### Defining a Puzzle
+### Defining a Puzzle 🗺️
 A zebra puzzle is characterized by a number of subjects and a number of attribute types of which every subject has
 a unique variant.
 ```@docs; canonical=false
@@ -47,7 +47,7 @@ puz_solved = ZebraPuzzle(
 Both of these puzzle types can contain clues which can lead the solver to a solution and in order to define a puzzle
 that is solvable, you need to add these to enable a solver to infer it.
 
-### Adding Clues
+### Adding Clues 📐
 There are various types of clues that can help solve a zebra puzzle. They may hint towards the position of the subject
 in relation to other subjects (direction, distance, etc.) or relation of the attributes (belong together,
 do not belong together, etc.).
@@ -114,7 +114,22 @@ Random.seed!(42) # hide
 fill_clues!(puz_solved)
 ```
 
-### Solving the Puzzle
+### Random Puzzle Generation 🎲
+Puzzles with a given number of attributes and subject can also be randomly generated
+```@example
+using ZebraPuzzles # hide
+using Random # hide
+Random.seed!(42) # hide
+rand(UnsolvedZebraPuzzle{3,3})
+```
+```@example
+using ZebraPuzzles # hide
+using Random # hide
+Random.seed!(42) # hide
+rand(UnsolvedZebraPuzzle{3,4})
+```
+
+### Solving the Puzzle 🧠
 Even if the puzzle has the clues to ensure a unique solution, it is still unsolved.
 ```@example unsolved
 @assert ZP.issolved(puz_unsolved) == false
@@ -134,7 +149,7 @@ and you can inspect the solution using [`show_solution`](@ref ZebraPuzzles.show_
 puz_unsolved |> ZebraPuzzles.show_solution
 ```
 
-### Natural Language
+### Natural Language 📖 
 If you would like to give the puzzle to someone (person 🤦 or an [AI agent](https://www.github.com/kunzaatko/PromptBench.jl) 🤖), you probably want to have it in natural language phrasing. You can get this
 using the function [`riddle`](@ref)
 ```@example unsolved
