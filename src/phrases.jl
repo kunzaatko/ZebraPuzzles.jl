@@ -14,6 +14,14 @@ function titlecase(s::String)
     return uppercase(s[1]) * s[2:end]
 end
 
+# The Englishman | LIVES IN | the red house.
+# The Spaniard | OWNS | the dog.
+# Coffee | IS DRUNK IN | the green house.
+# The Ukrainian | DRINKS | tea.
+# The Old Gold smoker | OWNS | snails.
+# Kools | ARE SMOKED IN | the yellow house.
+# The Lucky Strike smoker | DRINKS | orange juice.
+# The Japanese | SMOKES | Parliaments.
 function phrase(c::PositiveClue)
     a, b = attributes(c)
     if a isa House
@@ -29,6 +37,7 @@ function phrase(c::NegativeClue)
     return titlecase(rand(attributed(a))) * " " * rand(negation(b)) * "."
 end
 
+# The green house | IS IMMEDIATELY TO THE RIGHT OF | the ivory house.
 phrase(d::Direction) = d_left == d ? "to the left" : "to the right"
 function phrase(c::ExactRelativePosition{<:Any,<:Any,D}) where {D}
     a, b = attributes(c)
@@ -47,6 +56,8 @@ function phrase(c::ExactRelativePosition{<:Any,<:Any,D}) where {D}
            "."
 end
 
+# Milk | IS DRUNK IN | the middle house.
+# The Norwegian | LIVES IN | the first house.
 function phrase(c::AbsolutePosition)
     position_phrase(p, K) = begin
         if !ismissing(K)
@@ -67,6 +78,9 @@ function phrase(c::AbsolutePosition)
            " $noun."
 end
 
+# The man who smokes Chesterfields | LIVES IN THE HOUSE NEXT | to the man with the fox.
+# Kools | ARE SMOKED IN THE HOUSE NEXT TO | the house where the horse is kept.
+# The Norwegian | LIVES NEXT TO | the blue house.
 function phrase(c::AbsoluteDistance)
     verb = c.a isa House ? "is" : "lives"
     position_phrase = c.d == 1 ? "immediately next to " : "$(c.d) places from "
@@ -92,17 +106,12 @@ function phrase(c::DirectionClue{<:Any,<:Any,D}) where {D}
            "."
 end
 
-# The Englishman | LIVES IN | the red house.
-# The Spaniard | OWNS | the dog.
-# Coffee | IS DRUNK IN | the green house.
-# The Ukrainian | DRINKS | tea.
-# The green house | IS IMMEDIATELY TO THE RIGHT OF | the ivory house.
-# The Old Gold smoker | OWNS | snails.
-# Kools | ARE SMOKED IN | the yellow house.
-# Milk | IS DRUNK IN | the middle house.
-# The Norwegian | LIVES IN | the first house.
-# The man who smokes Chesterfields | LIVES IN THE HOUSE NEXT | to the man with the fox.
-# Kools | ARE SMOKED IN THE HOUSE NEXT TO | the house where the horse is kept.
-# The Lucky Strike smoker | DRINKS | orange juice.
-# The Japanese | SMOKES | Parliaments.
-# The Norwegian | LIVES NEXT TO | the blue house.
+function phrase(q::AttributeQuestion{A}) where {A}
+    return titlecase(rand(question(A, rand(attributed(q.subject)))))
+end
+
+# At which position does | the Englishman | LIVE ?
+function phrase(q::PositionQuestion)
+    who = rand(attributed(q.subject))
+    return rand(("At which position does $who live?", "What is the position of $(who)?"))
+end

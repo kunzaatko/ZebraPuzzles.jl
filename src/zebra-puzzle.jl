@@ -409,20 +409,6 @@ true
 """
 @interface check(z::ZebraPuzzle, ::Clue; kwargs...)
 
-function Random.rand(::Type{Clue}, z::ZebraPuzzle)
-    # NOTE: Impossible to to choose randomly using subtypes because we want to include type constants such as
-    # `PositiveClue` and `NegativeClue` <05-06-25> 
-    type = rand((
-        PositiveClue,
-        NegativeClue,
-        ExactRelativePosition,
-        DirectionClue,
-        AbsolutePosition,
-        AbsoluteDistance,
-    ))
-    return rand(type, z::ZebraPuzzle)
-end
-
 """
     add_clue!(z::ZebraPuzzle, c::Clue; ischecked=false, kwargs...)
 Adds a single clue `c` to the `ZebraPuzzle` `z`.
@@ -452,7 +438,7 @@ clues:
 ```
 """
 function add_clue!(z::ZebraPuzzle, c::Clue; ischecked=false, kwargs...)
-    !ischecked && check(z, c)
+    !ischecked && check(z, c; kwargs...)
     push!(z.clues, c)
     return z
 end
@@ -483,7 +469,7 @@ clues:
 """
 function add_clue!(z::ZebraPuzzle)
     c = rand(Clue, z)
-    return add_clue!(z, c; ischecked=false)
+    return add_clue!(z, c; types=false, variants=false) # NOTE: Valid must be checked in case of UnsolvedZebraPuzzle since we need to ensure the consistency of the clue set
 end
 
 """
@@ -520,6 +506,50 @@ clues:
 function add_clues!(z::ZebraPuzzle, cs::Vector{<:Clue}; ischecked=false, kwargs...)
     foreach(c -> add_clue!(z, c; ischecked), cs)
     return z
+end
+
+# TODO: Documentation
+function check(z::ZebraPuzzle, q::Question; types=true, variants=true) 
+    types && foreach(p -> check_attrtype(z, p), attr_types(q))
+    variants && foreach(p -> check_attrvariant(z, p), attributes(q))
+
+    return true
+end
+
+"""
+    add_question!(z::ZebraPuzzle, q::Question; ischecked=false)
+Add a question `q` to the `ZebraPuzzle` `z`.
+
+The question is checked (See [`check`](@ref)) prior to its addition if `ischecked == false`. Any other keyword arguments
+are passed to [`check`](@ref).
+
+```jldoctest
+julia> z = ZP.SIMPLE_ZEBRA |> deepcopy;
+
+julia> add_question!(z, AttributeQuestion{Drink}(House("red")))
+SolvedZebraPuzzle{3, 4, Tuple{House, Nationality, Smoke, Drink}} with no clues and 1 questions
+┌────────────────────────────────────────────────┐
+│ House  Nationality     Smoke         Drink     │
+├────────────────────────────────────────────────┤
+│  red   Englishman     Old Gold        tea      │
+├────────────────────────────────────────────────┤
+│ green   Japanese    Parliaments      coffee    │
+├────────────────────────────────────────────────┤
+│ ivory   Spaniard    Lucky Strike  orange juice │
+└────────────────────────────────────────────────┘
+
+questions:
+1) Drink[House("red")]?
+```
+"""
+function add_question!(z::ZebraPuzzle, q::Question; ischecked=false, kwargs...)
+    !ischecked && check(z, q; kwargs...)
+    push!(z.questions, q)
+    return z
+end
+function add_question!(z::ZebraPuzzle)
+    q = rand(Question, z)
+    return add_question!(z, q; ischecked=true)
 end
 
 """
@@ -578,6 +608,24 @@ function riddle(
             ""
         end
         riddle_string *= prefix * phrase(c) * "\n"
+    end
+
+    if !isempty(puzzle.questions)
+        riddle_string *= "\n"
+        if length(puzzle.questions) > 1
+            for (i, q) in enumerate(puzzle.questions)
+                prefix = if bulletpoints
+                    "- "
+                elseif numbers
+                    string(i) * ") "
+                else
+                    ""
+                end
+                riddle_string *= prefix * phrase(q) * "\n"
+            end
+        else
+            riddle_string *= phrase(puzzle.questions[1])
+        end
     end
     print(Markdown.parse(riddle_string))
     return riddle_string

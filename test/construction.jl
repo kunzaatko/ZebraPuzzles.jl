@@ -18,4 +18,4 @@ using ZebraPuzzles: ZebraPuzzles as ZP
     Pet => ("Weasel", "Cow", "Mammoth")
 ) isa ZP.UnsolvedZebraPuzzle
 
-@test ZebraPuzzle(ZP.EINSTEINS_ZEBRA.table, ZP.EINSTEINS_ZEBRA.clues) isa ZP.SolvedZebraPuzzle
+@test ZebraPuzzle(ZP.EINSTEINS_ZEBRA.table; clues=ZP.EINSTEINS_ZEBRA.clues) isa ZP.SolvedZebraPuzzle

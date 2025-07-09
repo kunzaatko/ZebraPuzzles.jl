@@ -11,6 +11,7 @@ mutable struct UnsolvedZebraPuzzle{K,N,Attrs} <: ZebraPuzzle{K,N,Attrs}
     table::DataFrame
     attr_variants::Dict
     clues::Vector{Clue}
+    questions::Vector{Question}
 end
 
 # interface implementations
@@ -24,7 +25,7 @@ end
 const AttributeVariants = Pair{<:Type,<:Tuple{Attribute,Vararg{Attribute}}}
 
 """
-    ZebraPuzzle(attribute_variants...)::UnsolvedZebraPuzzle
+    ZebraPuzzle(attribute_variants...; clues=Clue[], questions=Question[])::UnsolvedZebraPuzzle
 Construct an unsolved zebra puzzle. The puzzle holds the variants of the attributes and a solution table with missing
 values. Clues can be later added by [`add_clues!`](@ref).
 
@@ -44,7 +45,10 @@ UnsolvedZebraPuzzle{3, 3, Tuple{House, Person, Pet}} with no clues
 └──────────────────────────────┘
 ```
 """
-function ZebraPuzzle(z1::AttributeVariants, zns::Vararg{AttributeVariants})
+function ZebraPuzzle(z1::AttributeVariants, zns::Vararg{AttributeVariants};
+    clues::Vector{Clue}=Clue[],
+    questions::Vector{Question}=Question[],
+    )
     zebra = (z1, zns...)
     K = length(z1.second)
     N = length(zebra)
@@ -53,7 +57,7 @@ function ZebraPuzzle(z1::AttributeVariants, zns::Vararg{AttributeVariants})
     df = DataFrame(fill!(df_mat, missing), [col(a.first) for a in zebra])
     Attrs = Tuple{(a.first for a in zebra)...}
     return UnsolvedZebraPuzzle{K,N,Attrs}(
-        df, Dict(a.first => [a.second...] for a in zebra), Clue[]
+        df, Dict(a.first => [a.second...] for a in zebra), clues, questions
     )
 end
 
@@ -62,9 +66,11 @@ function parse_attrvars(z::AttrVar) where {AttrVar<:AttributeVariantNames}
     return z.first => parse.(fill(z.first), z.second)
 end
 function ZebraPuzzle(
-    z1::AttrVars, zns::Vararg{AttrVars}
+    z1::AttrVars, zns::Vararg{AttrVars};
+    clues::Vector{Clue}=Clue[],
+    questions::Vector{Question}=Question[],
 ) where {AttrVars<:AttributeVariantNames}
-    return ZebraPuzzle(parse_attrvars(z1), parse_attrvars.(zns)...)
+    return ZebraPuzzle(parse_attrvars(z1), parse_attrvars.(zns)...; clues, questions)
 end
 
 # interface implementations
@@ -78,10 +84,16 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", z::UnsolvedZebraPuzzle)
     Base.showarg(io, z, true)
+    hintquestions = !isempty(z.questions)
     if isempty(z.clues)
-        print(io, " with no clues\n")
+        print(io, " with no clues")
     else
-        print(io, " with $(length(z.clues)) clues\n")
+        print(io, " with $(length(z.clues)) clues")
+    end
+    if !hintquestions
+        print(io, "\n")
+    else
+        print(io, " and $(length(z.questions)) questions\n")
     end
     @mock pretty_table(
         io,
@@ -101,6 +113,15 @@ function Base.show(io::IO, ::MIME"text/plain", z::UnsolvedZebraPuzzle)
         for (i, clue) in enumerate(z.clues)
             printstyled(io, i, ") "; bold=true)
             printstyled(io, string(clue); italic=true)
+            print(io, "\n")
+        end
+    end
+
+    if !isempty(z.questions)
+        printstyled(io, "\nquestions:\n"; bold=true, underline=true)
+        for (i, question) in enumerate(z.questions)
+            printstyled(io, i, ") "; bold=true)
+            printstyled(io, string(question); italic=true)
             print(io, "\n")
         end
     end

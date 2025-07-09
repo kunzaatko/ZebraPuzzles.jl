@@ -5,6 +5,7 @@ A [`ZebraPuzzle`](@ref) that is created with a known solution table.
 mutable struct SolvedZebraPuzzle{K,N,Attrs} <: ZebraPuzzle{K,N,Attrs}
     table::DataFrame
     clues::Vector{Clue}
+    questions::Vector{Question}
 end
 
 function indexof(z::SolvedZebraPuzzle, a::Type{<:Attribute})
@@ -18,7 +19,7 @@ end
 const Attributes = Tuple{Attribute,Vararg{Attribute}}
 
 """
-    ZebraPuzzle(linked_attributes...)::SolvedZebraPuzzle
+    ZebraPuzzle(linked_attributes...; clues=Clue[], questions=Question[])::SolvedZebraPuzzle
 Construct a solved zebra puzzle with the solution table `zpairs` with no clues. Clues can be later added by
 [`add_clues!`](@ref).
 
@@ -43,26 +44,42 @@ SolvedZebraPuzzle{4, 3, Tuple{Person, Hat, Nationality}} with no clues
 └─────────────────────────────┘
 ```
 """
-function ZebraPuzzle(z1::Attrs, zns::Vararg{Attrs}) where {Attrs<:Attributes}
+function ZebraPuzzle(
+    z1::Attrs,
+    zns::Vararg{Attrs};
+    clues::Vector{Clue}=Clue[],
+    questions::Vector{Question}=Question[],
+) where {Attrs<:Attributes}
     zebra = (z1, zns...)
     K = length(zebra)
     N = length(z1)
     cols = [Dict(col(a) => a for a in z) for z in zebra]
     df = DataFrame(Tables.dictcolumntable(cols))
     @assert all(allunique(string(a) for a in attrs) for attrs in eachcol(df)) "All attributes of a single type must be unique"
-    return SolvedZebraPuzzle{K,N,Attrs}(df, Clue[])
+    return SolvedZebraPuzzle{K,N,Attrs}(df, clues, questions)
 end
-function ZebraPuzzle(a1::Attributes, as::Vararg{Attributes})
+function ZebraPuzzle(
+    a1::Attributes,
+    as::Vararg{Attributes};
+    clues::Vector{Clue}=Clue[],
+    questions::Vector{Question}=Question[],
+)
     return ZebraPuzzle(
-        map(a -> Tuple(sort(collect(a); by=(string ∘ typeof))), (a1, as...))...
+        map(a -> Tuple(sort(collect(a); by=(string ∘ typeof))), (a1, as...))...;
+        clues,
+        questions,
     )
 end
 
-function ZebraPuzzle(solution_table::DataFrame, clues::Vector{Clue}=Clue[])
+function ZebraPuzzle(
+    solution_table::DataFrame;
+    clues::Vector{Clue}=Clue[],
+    questions::Vector{Question}=Question[],
+)
     K, N = nrow(solution_table), ncol(solution_table)
     @assert all(allunique(string(a) for a in attrs) for attrs in eachcol(solution_table)) "All attributes of a single type must be unique"
     Attrs = Tuple{(eltype(a) for a in eachcol(solution_table))...}
-    return SolvedZebraPuzzle{K,N,Attrs}(solution_table, clues)
+    return SolvedZebraPuzzle{K,N,Attrs}(solution_table, clues, questions)
 end
 
 function attributes(z::SolvedZebraPuzzle)
@@ -129,14 +146,23 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", z::SolvedZebraPuzzle; cluenumber=true)
     Base.showarg(io, z, true)
+    hintquestions = !isempty(z.questions)
     if cluenumber
         if isempty(z.clues)
-            print(io, " with no clues\n")
+            print(io, " with no clues")
         else
-            print(io, " with $(length(z.clues)) clues\n")
+            print(io, " with $(length(z.clues)) clues")
         end
-    else
+    end
+    if !hintquestions
         print(io, "\n")
+    else
+        if cluenumber
+            print(io, " and ")
+        else
+            print(io, " with ")
+        end
+        print(io, "$(length(z.questions)) questions\n")
     end
     @mock pretty_table(
         io,
@@ -153,6 +179,15 @@ function Base.show(io::IO, ::MIME"text/plain", z::SolvedZebraPuzzle; cluenumber=
         for (i, clue) in enumerate(z.clues)
             printstyled(io, i, ") "; bold=true)
             printstyled(io, string(clue); italic=true)
+            print(io, "\n")
+        end
+    end
+
+    if !isempty(z.questions)
+        printstyled(io, "\nquestions:\n"; bold=true, underline=true)
+        for (i, question) in enumerate(z.questions)
+            printstyled(io, i, ") "; bold=true)
+            printstyled(io, string(question); italic=true)
             print(io, "\n")
         end
     end

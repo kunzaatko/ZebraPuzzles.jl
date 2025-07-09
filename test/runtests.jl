@@ -108,6 +108,10 @@ end
     @cond_testset "unsolved" begin
         include("unsolved.jl")
     end
+    
+    @cond_testset "questions" begin
+        include("questions.jl")
+    end
 end
 
 if run_all

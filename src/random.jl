@@ -83,6 +83,42 @@ function Random.rand(::Type{AbsoluteDistance}, z::UnsolvedZebraPuzzle{K}) where 
     return AbsoluteDistance(a, b, r)
 end
 
+function Random.rand(::Type{Clue}, z::ZebraPuzzle)
+    # NOTE: Impossible to to choose randomly using subtypes because we want to include type constants such as
+    # `PositiveClue` and `NegativeClue` <05-06-25> 
+    type = rand((
+        PositiveClue,
+        NegativeClue,
+        ExactRelativePosition,
+        DirectionClue,
+        AbsolutePosition,
+        AbsoluteDistance,
+    ))
+    return rand(type, z::ZebraPuzzle)
+end
+
+function Random.rand(::Type{AttributeQuestion{A,S}}, z::ZebraPuzzle) where {S,A}
+    subject = rand(attributes(z, S))
+    return AttributeQuestion{A,typeof(subject)}(subject)
+end
+function Random.rand(::Type{AttributeQuestion{A}}, z::ZebraPuzzle) where {A}
+    return rand(AttributeQuestion{A,rand(filter(!=(A), attrtypes(z)))}, z)
+end
+function Random.rand(::Type{AttributeQuestion}, z::ZebraPuzzle)
+    return rand(AttributeQuestion{rand(attrtypes(z))}, z)
+end
+
+function Random.rand(::Type{PositionQuestion{A}}, z::ZebraPuzzle) where {A}
+    return PositionQuestion{A}(rand(attributes(z, A)))
+end
+function Random.rand(::Type{PositionQuestion}, z::ZebraPuzzle)
+    return rand(PositionQuestion{rand(attrtypes(z))}, z)
+end
+function Random.rand(::Type{Question}, z::ZebraPuzzle)
+    type = rand((PositionQuestion, AttributeQuestion))
+    return rand(type, z::ZebraPuzzle)
+end
+
 function accumsubtypes!(T::Type, accum::Vector{Type}, left::Vector{Type})
     @assert isabstracttype(T) "The type passed to the accumulator `accumsubtypes!` must be an abstract type"
     T_sub = subtypes(T)
@@ -102,8 +138,9 @@ accumsubtypes(T::Type) = accumsubtypes!(T, Type[], Type[])
 Generate a random unsolved zebra puzzle with `K` subjects each of which has `N` attributes.
 
 If `clues` is `true`, the puzzle is filled with a minimal set of random clues ensuring that it is solvable.
+If `question` is `true`, the puzzle is accompanied with a random question about the puzzle.
 """
-function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true) where {K,N}
+function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true, question=true) where {K,N}
     attrs = [rand([House, Person])] # main attribute
     append!(
         attrs, first(shuffle(filter(k -> !in(k, attrs), accumsubtypes(Attribute))), K - 1)
@@ -119,10 +156,17 @@ function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true) where {K,N}
         "; ",
     ))
     """
+if clues
     @info "Generating clues…"
-    clues && fill_clues!(puzzle)
+    fill_clues!(puzzle)
+end
+if question
+    @info "Generating question…"
+    add_question!(puzzle)
+end
+
     return puzzle
 end
-function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true)
+function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true, question=true)
     return rand(UnsolvedZebraPuzzle{K,N}; clues)
 end

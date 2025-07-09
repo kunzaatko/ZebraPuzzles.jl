@@ -24,5 +24,5 @@ include("random.jl")
 include("puzzles.jl")
 
 export SolvedZebraPuzzle, UnsolvedZebraPuzzle, ZebraPuzzle
-export ZebraPuzzle, add_clues!, add_clue!, attributes, riddle, nclue, nattr
+export ZebraPuzzle, add_clues!, add_clue!, add_question!, attributes, riddle, nclue, nattr
 end

@@ -9,11 +9,16 @@ See also [`EINSTEINS_ZEBRA`](@ref)
 struct House <: Attribute
     description::String
 end
-attributed(d::House) = [
-    "the $(string(d)) house"
-]
+attributed(d::House) = ["the $(string(d)) house"]
 attributed_position(d::House) = attributed(d)
 attribution(h::House) = ["lives in the $(h.description) house"]
 negation(h::House) = ["does not live in the $(h.description) house"]
+
+function question(::Type{House}, who::String)
+    return [
+        "Where does $who live?",
+        ("$a house does $who live in?" for a in ["which", "what"])...,
+    ]
+end
 
 variants(::Type{House}) = ["red", "green", "blue", "yellow", "white", "black", "ivory"]

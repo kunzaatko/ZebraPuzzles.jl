@@ -8,11 +8,13 @@ struct Nationality <: Attribute
     name::String
 end
 
-attributed(d::Nationality) = [
-    "the $(string(d))",
-]
+attributed(d::Nationality) = ["the $(string(d))"]
 attribution(d::Nationality) = ["is a $(d.name)"]
 negation(d::Nationality) = ["is not a $(d.name)"]
+
+function question(::Type{Nationality}, who::String)
+    return ["$a nationality is $(who)?" for a in ["which", "what"]]
+end
 
 function variants(::Type{Nationality})
     return [
