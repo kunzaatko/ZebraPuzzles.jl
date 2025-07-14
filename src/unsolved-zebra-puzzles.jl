@@ -22,6 +22,11 @@ function indexof(z::UnsolvedZebraPuzzle, a::Attribute)
     return (findfirst(==(a), z.attr_variants[typeof(a)]), indexof(z, typeof(a)))
 end
 
+function truthtable(z::UnsolvedZebraPuzzle)
+    issolved(z) || throw(UnsolvedPuzzle(Ref(z)))
+    return z.table
+end
+
 const AttributeVariants = Pair{<:Type,<:Tuple{Attribute,Vararg{Attribute}}}
 
 """
@@ -45,10 +50,12 @@ UnsolvedZebraPuzzle{3, 3, Tuple{House, Person, Pet}} with no clues
 └──────────────────────────────┘
 ```
 """
-function ZebraPuzzle(z1::AttributeVariants, zns::Vararg{AttributeVariants};
+function ZebraPuzzle(
+    z1::AttributeVariants,
+    zns::Vararg{AttributeVariants};
     clues::Vector{Clue}=Clue[],
     questions::Vector{Question}=Question[],
-    )
+)
     zebra = (z1, zns...)
     K = length(z1.second)
     N = length(zebra)
@@ -66,7 +73,8 @@ function parse_attrvars(z::AttrVar) where {AttrVar<:AttributeVariantNames}
     return z.first => parse.(fill(z.first), z.second)
 end
 function ZebraPuzzle(
-    z1::AttrVars, zns::Vararg{AttrVars};
+    z1::AttrVars,
+    zns::Vararg{AttrVars};
     clues::Vector{Clue}=Clue[],
     questions::Vector{Question}=Question[],
 ) where {AttrVars<:AttributeVariantNames}
@@ -238,15 +246,16 @@ function issolved(puzzle::UnsolvedZebraPuzzle)
     return all(all(ismissing.(col) .== false) for col in eachcol(puzzle.table))
 end
 
+# TODO: Register hint for this error to tell the user that he can `solve!` the puzzle <10-07-25> 
 """
     UnsolvedPuzzle <: PuzzleError
-Thrown when [`show_solution`](@ref) is called on an unsolved puzzle.
+Thrown when [`show_solution`](@ref) or [`truthtable`](@ref) is called on an unsolved puzzle.
 """
 struct UnsolvedPuzzle <: PuzzleError
-    puzzle::Ref{<:UnsolvedPuzzle}
+    puzzle::Ref{<:UnsolvedZebraPuzzle}
 end
-function Base.showerror(io::IO, e::UnsolvedPuzzle)
-    return print(io, "UnsolvedPuzzle: puzzle $(e.puzzle[]) is not solved")
+function Base.showerror(io::IO, ::UnsolvedPuzzle)
+    return print(io, "UnsolvedPuzzle: puzzle is not solved")
 end
 
 """

@@ -106,10 +106,12 @@ function phrase(c::DirectionClue{<:Any,<:Any,D}) where {D}
            "."
 end
 
+# FIX: If house is gotten as an subject attribute, we can get a nonsensical phrase such as: "Who is the green house?" <10-07-25> 
 function phrase(q::AttributeQuestion{A}) where {A}
     return titlecase(rand(question(A, rand(attributed(q.subject)))))
 end
 
+# FIX: No distinction between house and person. It is possible to get the phrase "At which position does the ivory house live?" <10-07-25> 
 # At which position does | the Englishman | LIVE ?
 function phrase(q::PositionQuestion)
     who = rand(attributed(q.subject))

@@ -15,6 +15,8 @@ function indexof(z::SolvedZebraPuzzle, a::Attribute)
     return (findfirst(==(a), z.table[!, col(a)]), indexof(z, typeof(a)))
 end
 
+truthtable(z::SolvedZebraPuzzle) = z.table
+
 # NOTE: Construction of Tuple{A,Vararg{A}} is used for assuring bounded function argument types. See `Test.detect_unbound_args` <10-06-25> 
 const Attributes = Tuple{Attribute,Vararg{Attribute}}
 

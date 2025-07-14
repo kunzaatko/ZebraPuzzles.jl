@@ -1,18 +1,5 @@
 using Tables, DataAPI, Markdown
 
-"""
-    ZebraPuzzle{K,N,Attrs}
-
-Represents a Zebra Puzzle, a type of logic puzzle where one deduces relationships between different subjects and their
-attributes based on a set of clues.
-
-# Type Parameters
-- `K`: number of puzzle subjects and therefore also the number of distinct values of every attribute type
-- `N`: number of attributes of per subject
-- `Attrs`: attribute types `Tuple{Attr1,Attr2,...}` where `Attri` can be e.g. [`Hat`](@ref), [`Nationality`](@ref), [`Person`](@ref) or [`House`](@ref). It has length `N`.
-"""
-abstract type ZebraPuzzle{K,N,Attrs} end
-
 include("satisfiability.jl")
 
 Tables.istable(::Type{<:ZebraPuzzle}) = true
@@ -71,6 +58,14 @@ julia> ZP.indexof(ZP.EINSTEINS_ZEBRA, Smoke)
 """
 @interface indexof(z::ZebraPuzzle, ::Type{<:Attribute})
 @interface indexof(z::ZebraPuzzle, ::Attribute)
+
+"""
+    truthtable(puzzle::ZebraPuzzle)
+Get the truth table of the `puzzle`.
+
+Throws a `PuzzleError` if the puzzle is not solved yet.
+"""
+@interface truthtable(z::ZebraPuzzle)
 
 """
     attributes(puzzle::ZebraPuzzle)
@@ -509,7 +504,7 @@ function add_clues!(z::ZebraPuzzle, cs::Vector{<:Clue}; ischecked=false, kwargs.
 end
 
 # TODO: Documentation
-function check(z::ZebraPuzzle, q::Question; types=true, variants=true) 
+function check(z::ZebraPuzzle, q::Question; types=true, variants=true)
     types && foreach(p -> check_attrtype(z, p), attr_types(q))
     variants && foreach(p -> check_attrvariant(z, p), attributes(q))
 
@@ -591,10 +586,16 @@ The string uses markdown for bullet points or numbers and prints the Markdown us
 If `introduction=false` is (default `true`) the introduction such as `"There are five houses."` is skipped.
 If `bulletpoints=true`, the clues are prefixed with `"- "` and if `numbers=true` the clues are prefixed with `"i)"`. If both are `false` the clues only have a space between them.
 
+If `quiet=true` the riddle is not printed but only returned as a string.
+
 See also [`solve!`](@ref)
 """
 function riddle(
-    puzzle::ZebraPuzzle{K}; numbers=false, bulletpoints=!numbers, introduction=true
+    puzzle::ZebraPuzzle{K};
+    numbers=false,
+    bulletpoints=!numbers,
+    introduction=true,
+    quiet=false,
 ) where {K}
     mainsubject = attrtypes(puzzle)[findfirst(a -> a <: Subject, attrtypes(puzzle))]
     has_unique_solution(puzzle) || throw(UnsolvablePuzzle(Ref(puzzle)))
@@ -627,7 +628,7 @@ function riddle(
             riddle_string *= phrase(puzzle.questions[1])
         end
     end
-    print(Markdown.parse(riddle_string))
+    quiet || print(Markdown.parse(riddle_string))
     return riddle_string
 end
 
@@ -658,3 +659,9 @@ end
 Get the number of clues of the puzzle.
 """
 nclue(zp::ZebraPuzzle) = length(zp.clues)
+
+"""
+    nquestion(puzzle)
+Get the number of questions of the puzzle.
+"""
+nquestion(zp::ZebraPuzzle) = length(zp.questions)

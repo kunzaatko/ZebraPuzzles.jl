@@ -15,6 +15,24 @@ abstract type Question end
 @interface attr_types(q::Question)::Vector{Attribute}
 
 """
+    answer(q::Question, z::ZebraPuzzle)
+Give the answer to the question `q` in the `ZebraPuzzle` `z`.
+
+```jldoctest
+julia> aq = AttributeQuestion{Smoke}(Nationality("Englishman"));
+
+julia> ZP.answer(aq, ZP.EINSTEINS_ZEBRA)
+Smoke("Old Gold")
+
+julia> pq = PositionQuestion(Drink("water"));
+
+julia> ZP.answer(pq, ZP.EINSTEINS_ZEBRA)
+1
+```
+"""
+@interface answer(q::Question, puz::ZebraPuzzle)
+
+"""
     AttributeQuestion{A,S} <: Question
 A question about a specific attribute of type `A` of the subject type `S`, or position if `S<:Int`.
 
@@ -25,7 +43,11 @@ struct AttributeQuestion{A,S} <: Question
 end
 AttributeQuestion{A}(s::Attribute) where {A} = AttributeQuestion{A,typeof(s)}(s)
 attributes(aq::AttributeQuestion) = [aq.subject]
-attr_types(aq::AttributeQuestion{A,S}) where {A,S} = [A,S]
+qattrtype(::AttributeQuestion{A}) where {A} = A
+attr_types(::AttributeQuestion{A,S}) where {A,S} = [A, S]
+function answer(aq::AttributeQuestion, z::ZebraPuzzle)
+    return truthtable(z)[indexof(z, aq.subject)[1], col(qattrtype(aq))]
+end
 
 function Base.string(aq::AttributeQuestion{A}) where {A}
     return "$(A)[$(aq.subject)]?"
@@ -41,7 +63,10 @@ struct PositionQuestion{A} <: Question
     subject::A
 end
 attributes(pq::PositionQuestion) = [pq.subject]
-attr_types(pq::PositionQuestion{A}) where {A} = [A]
+attr_types(::PositionQuestion{A}) where {A} = [A]
+function answer(pq::PositionQuestion, z::ZebraPuzzle)
+    return findfirst(==(pq.subject), truthtable(z)[!, col(pq.subject)])
+end
 
 Base.string(pq::PositionQuestion) = "Pos[$(pq.subject)]?"
 
