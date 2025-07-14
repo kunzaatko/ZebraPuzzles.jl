@@ -15,10 +15,7 @@ attribution(h::House) = ["lives in the $(h.description) house"]
 negation(h::House) = ["does not live in the $(h.description) house"]
 
 function question(::Type{House}, who::String)
-    return [
-        "Where does $who live?",
-        ("$a house does $who live in?" for a in ["which", "what"])...,
-    ]
+    return [("$a colour does house of $who have?" for a in ["which", "what"])...]
 end
 
 variants(::Type{House}) = ["red", "green", "blue", "yellow", "white", "black", "ivory"]
