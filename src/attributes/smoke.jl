@@ -32,7 +32,7 @@ function variants(::Type{Smoke})
         "Kools",
         "Chesterfields",
         "Old Gold",
-        "Lucky Strike",
+        "Lucky Strikes",
         "Parliaments",
         "Marlboro",
         "Golden Virginia",
