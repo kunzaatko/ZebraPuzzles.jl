@@ -632,6 +632,29 @@ function riddle(
     return riddle_string
 end
 
+"""
+    answer(puzzle::ZebraPuzzle)
+Give the phrases for the answers to the puzzle questions.
+
+```julia-repl
+julia> puz = ZP.EINSTEINS_ZEBRA |> deepcopy;
+
+julia> add_question!(puz); puz.questions[1]
+PositionQuestion{House}(House("ivory"))
+
+julia> ZP.answer(puz)
+"The ivory house is in the fourth position."
+```
+"""
+function answer(puzzle::ZebraPuzzle)
+    answers = phrase.(toclue(q, puzzle) for q in puzzle.questions)
+    if length(answers) == 1
+        return answers[1]
+    else
+        return join("- " .* answers, "\n")
+    end
+end
+
 for func in (:(==), :isequal)
     @eval function Base.$func(
         tf1::A, tf2::B; kwargs...

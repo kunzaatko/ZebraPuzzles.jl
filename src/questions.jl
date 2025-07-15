@@ -33,6 +33,20 @@ julia> ZP.answer(pq, ZP.EINSTEINS_ZEBRA)
 @interface answer(q::Question, puz::ZebraPuzzle)
 
 """
+    toclue(q::Question, puz::ZebraPuzzle)
+Get the clue that corresponds to the question `q` in the puzzle.
+
+Throws an `UnsolvedPuzzle` error if the puzzle is not solved.
+
+
+```jldoctest
+julia> ZP.toclue(AttributeQuestion{Smoke}(Nationality("Englishman")), ZP.EINSTEINS_ZEBRA)
+julia> ZP.toclue(PositionQuestion(Smoke("Parliaments")), ZP.EINSTEINS_ZEBRA)
+```
+"""
+@interface toclue(q::Question, puz::ZebraPuzzle)
+
+"""
     AttributeQuestion{A,S} <: Question
 A question about a specific attribute of type `A` of the subject type `S`, or position if `S<:Int`.
 
@@ -48,6 +62,7 @@ attr_types(::AttributeQuestion{A,S}) where {A,S} = [A, S]
 function answer(aq::AttributeQuestion, z::ZebraPuzzle)
     return truthtable(z)[indexof(z, aq.subject)[1], col(qattrtype(aq))]
 end
+toclue(aq::AttributeQuestion, z::ZebraPuzzle) = Clue(aq.subject, answer(aq, z))
 
 function Base.string(aq::AttributeQuestion{A}) where {A}
     return "$(A)[$(aq.subject)]?"
@@ -67,6 +82,7 @@ attr_types(::PositionQuestion{A}) where {A} = [A]
 function answer(pq::PositionQuestion, z::ZebraPuzzle)
     return findfirst(==(pq.subject), truthtable(z)[!, col(pq.subject)])
 end
+toclue(pq::PositionQuestion, z::ZebraPuzzle{K}) where {K} = AbsolutePosition(pq.subject, answer(pq, z), K)
 
 Base.string(pq::PositionQuestion) = "Pos[$(pq.subject)]?"
 
