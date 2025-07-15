@@ -60,7 +60,9 @@ attributes(aq::AttributeQuestion) = [aq.subject]
 qattrtype(::AttributeQuestion{A}) where {A} = A
 attr_types(::AttributeQuestion{A,S}) where {A,S} = [A, S]
 function answer(aq::AttributeQuestion, z::ZebraPuzzle)
-    return truthtable(z)[indexof(z, aq.subject)[1], col(qattrtype(aq))]
+    return truthtable(z)[
+        findfirst(==(aq.subject), truthtable(z)[!, col(aq.subject)]), col(qattrtype(aq))
+    ]
 end
 toclue(aq::AttributeQuestion, z::ZebraPuzzle) = Clue(aq.subject, answer(aq, z))
 
@@ -82,7 +84,9 @@ attr_types(::PositionQuestion{A}) where {A} = [A]
 function answer(pq::PositionQuestion, z::ZebraPuzzle)
     return findfirst(==(pq.subject), truthtable(z)[!, col(pq.subject)])
 end
-toclue(pq::PositionQuestion, z::ZebraPuzzle{K}) where {K} = AbsolutePosition(pq.subject, answer(pq, z), K)
+function toclue(pq::PositionQuestion, z::ZebraPuzzle{K}) where {K}
+    return AbsolutePosition(pq.subject, answer(pq, z), K)
+end
 
 Base.string(pq::PositionQuestion) = "Pos[$(pq.subject)]?"
 

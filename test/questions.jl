@@ -18,3 +18,17 @@
 end
 
 @test rand(Question, ZP.EINSTEINS_ZEBRA) isa Question
+
+@test ZP.answer(ZP.AttributeQuestion{Smoke}(House("red")), ZP.EINSTEINS_ZEBRA) isa ZP.Attribute
+@test_throws ZP.UnsolvedPuzzle ZP.answer(ZP.AttributeQuestion{Smoke}(House("red")), ZP.UNSOLVED_EINSTEINS_ZEBRA)
+
+@test ZP.answer(ZP.PositionQuestion(Smoke("Kools")), ZP.EINSTEINS_ZEBRA) isa Number
+@test_throws ZP.UnsolvedPuzzle ZP.answer(ZP.PositionQuestion(Smoke("Kools")), ZP.UNSOLVED_EINSTEINS_ZEBRA)
+
+puz = ZP.UNSOLVED_EINSTEINS_ZEBRA |> deepcopy
+solve!(puz)
+
+@test ZP.answer(ZP.PositionQuestion(Smoke("Kools")), puz) == 1
+@test ZP.answer(ZP.AttributeQuestion{Smoke}(House("red")), puz) == Smoke("Old Gold")
+
+@test all(ZP.answer(q, ZP.EINSTEINS_ZEBRA) == ZP.answer(q, puz) for q in (rand(Question, ZP.EINSTEINS_ZEBRA) for i in Base.OneTo(100)))
