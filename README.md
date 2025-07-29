@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="./docs/src/assets/logo.png" alt="ZebraPuzzles.jl Logo: A zebra with Einsteins hair in julia colours" style="width: 35%">
+</p>
+
 # ZebraPuzzles
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://kunzaatko.github.io/ZebraPuzzles.jl/stable/)
