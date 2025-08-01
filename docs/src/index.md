@@ -118,12 +118,12 @@ fill_clues!(puz_solved)
 You may not want to require the full truth table as the solution. In this case, you may want to phrase a specific [`Question`](@ref) about the puzzle. You can either ask a question about an attribute of a subject ([`AttributeQuestion`](@ref))
 ```@example unsolved
 Random.seed!(42) # hide
-attrq = rand(AttributeQuestion, unsolved_puz)
+attrq = rand(AttributeQuestion, puz_unsolved)
 ```
 or a question about the position of a subject ([`PositionQuestion`](@ref))
 ```@example unsolved
 Random.seed!(42) # hide
-posq = rand(PositionQuestion, unsolved_puz)
+posq = rand(PositionQuestion, puz_unsolved)
 ```
 
 Similarly to the case of clues, we can add a question to the puzzle with [`add_question!`](@ref).
