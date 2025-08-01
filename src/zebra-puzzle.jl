@@ -503,7 +503,16 @@ function add_clues!(z::ZebraPuzzle, cs::Vector{<:Clue}; ischecked=false, kwargs.
     return z
 end
 
-# TODO: Documentation
+"""
+    check(z::ZebraPuzzle, q::Question, types=true, variants=true)
+Implementation of the `check` interface for `ZebraPuzzle` that checks the questions `q` for valid types and attribute
+variants.
+
+# Keyword Arguments
+Keyword arguments control which of the checks are controlled for the clue.
+- `types=true` --  question has valid attribute types for the puzzle?
+- `variants=true` -- question has valid attribute variants ("names") for the puzzle?
+"""
 function check(z::ZebraPuzzle, q::Question; types=true, variants=true)
     types && foreach(p -> check_attrtype(z, p), attr_types(q))
     variants && foreach(p -> check_attrvariant(z, p), attributes(q))

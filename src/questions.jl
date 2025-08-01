@@ -8,11 +8,52 @@ Subtypes are [`AttributeQuestion`](@ref), [`PositionQuestion`](@ref)
 """
 abstract type Question end
 
+"""
+    phrase(q::Question) => String
+Get a string representation of the question `q`
+
+Every subtype of `Question` must implement this interface
+
+```jldoctest
+julia> aq = AttributeQuestion{Smoke}(Nationality("Englishman"));
+
+julia> ZP.phrase(aq)
+"What cigarette brand does the Englishman prefer?"
+```
+"""
 @interface phrase(q::Question)::String
-# TODO: Documentation
+
+"""
+    attributes(q::Question) => Vector{Attribute}
+Get the attributes that the question `q` is about
+
+Every subtype of `Question` must implement this interface.
+
+```jldoctest
+julia> aq = AttributeQuestion{Smoke}(Nationality("Englishman"));
+
+julia> ZP.attributes(aq)
+1-element Vector{Nationality}:
+ Nationality("Englishman")
+```
+"""
 @interface attributes(q::Question)::Vector{Attribute}
-# TODO: Documentation
-@interface attr_types(q::Question)::Vector{Attribute}
+
+"""
+    attr_types(q::Question) => Vector
+Get the attribute types that the question `q` is about
+
+Every subtype of `Question` must implement this interface.
+```jldoctest
+julia> aq = AttributeQuestion{Smoke}(Nationality("Englishman"));
+ 
+julia> ZP.attr_types(aq)
+2-element Vector{DataType}:
+ Smoke
+ Nationality
+```
+"""
+@interface attr_types(q::Question)::Vector
 
 """
     answer(q::Question, z::ZebraPuzzle)
@@ -38,10 +79,12 @@ Get the clue that corresponds to the question `q` in the puzzle.
 
 Throws an `UnsolvedPuzzle` error if the puzzle is not solved.
 
-
 ```jldoctest
 julia> ZP.toclue(AttributeQuestion{Smoke}(Nationality("Englishman")), ZP.EINSTEINS_ZEBRA)
+PositiveClue{Nationality, Smoke}(Nationality("Englishman"), Smoke("Old Gold"))
+
 julia> ZP.toclue(PositionQuestion(Smoke("Parliaments")), ZP.EINSTEINS_ZEBRA)
+AbsolutePosition{Smoke, Int64}(Smoke("Parliaments"), 5, 5)
 ```
 """
 @interface toclue(q::Question, puz::ZebraPuzzle)
