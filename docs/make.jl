@@ -17,12 +17,13 @@ bib = CitationBibliography(
 makedocs(;
     modules=[ZebraPuzzles],
     authors="Martin Kunz <martinkunz@email.cz> and contributors",
+    repo=Remotes.GitHub("kunzaatko", "ZebraPuzzles.jl"),
     sitename="ZebraPuzzles.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://kunzaatko.github.io/ZebraPuzzles.jl",
         edit_link="trunk",
-        assets=String[],
+        assets=["assets/favicon.ico"],
     ),
     pages=[
         "Home" => "index.md",
