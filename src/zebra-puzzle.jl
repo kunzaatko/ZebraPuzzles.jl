@@ -209,7 +209,7 @@ function Base.showerror(io::IO, e::AttributeTypeError)
 end
 
 """
-    check_attrtype(puzzle, s::Type{<:Attribute})
+    check_attrtype(puzzle, s::Type{<:Attribute}; throw_error=true)::Bool
     check_attrtype(puzzle, s::Attribute)
 Check that the attribute of type `s` is a valid attribute type in the `puzzle`
 
@@ -228,8 +228,12 @@ ERROR: AttributeTypeError: attribute type `Hat` is invalid for the given puzzle.
 [...]
 ```
 """
-function check_attrtype(z::ZebraPuzzle, s::Type{<:Attribute})
-    return s in attrtypes(z) || throw(AttributeTypeError(s, Ref(z)))
+function check_attrtype(z::ZebraPuzzle, s::Type{<:Attribute}; throw_error=true)
+    if !(s in attrtypes(z))
+        throw_error && throw(AttributeTypeError(s, Ref(z)))
+        return false
+    end
+    return true
 end
 check_attrtype(z::ZebraPuzzle, s::Attribute) = check_attrtype(z, typeof(s))
 
@@ -251,14 +255,18 @@ function Base.showerror(io::IO, e::AttributeVariantError)
 end
 
 """
-    check_attrvariant(puzzle, s::Attribute)
+    check_attrvariant(puzzle, s::Attribute; throw_error=true)::Bool
 Check that the attribute variant `s` is included in the `puzzle`.
 
 !!! warning
     Assumes that the attribute type `typeof(s)` is valid for the `puzzle`.
 """
-function check_attrvariant(z::ZebraPuzzle, s::Attribute)
-    return s in attributes(z, typeof(s)) || throw(AttributeVariantError(s, Ref(z)))
+function check_attrvariant(z::ZebraPuzzle, s::Attribute; throw_error=true)
+    if !(s in attributes(z, typeof(s)))
+        throw_error && throw(AttributeVariantError(s, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """
@@ -287,11 +295,15 @@ function Base.showerror(io::IO, e::DuplicateClue)
 end
 
 """
-    check_duplicate(puzzle, c::Clue)
+    check_duplicate(puzzle, c::Clue; throw_error=true)::Bool
 Check that the clue `c` is not already included in the `puzzle`.
 """
-function check_duplicate(z::ZebraPuzzle, c::Clue)
-    return c in z.clues && throw(DuplicateClue(c, Ref(z)))
+function check_duplicate(z::ZebraPuzzle, c::Clue; throw_error=true)
+    if c in z.clues
+        throw_error && throw(DuplicateClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """
@@ -312,7 +324,7 @@ function Base.showerror(io::IO, e::ImpliedClue)
 end
 
 """
-    check_implied(puzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(puzzle))
+    check_implied(puzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(puzzle); throw_error=true)::Bool
 Check that the clue `c` is not implied by the rules and clues already included in the `puzzle`.
 
 ```jldoctest
@@ -342,9 +354,14 @@ ERROR: ImpliedClue: clue Drink("tea") ⟹ House("red") is implied by the rules a
 [...]
 ```
 """
-function check_implied(z::ZebraPuzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(z))
-    return sat!(and(not(expr(c, exprs)), and(assertions(z, exprs)))) == :SAT ||
-           throw(ImpliedClue(c, Ref(z)))
+function check_implied(
+    z::ZebraPuzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(z); throw_error=true
+)
+    if !(sat!(and(not(expr(c, exprs)), and(assertions(z, exprs)))) == :SAT)
+        throw_error && throw(ImpliedClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """
@@ -375,18 +392,23 @@ function Base.showerror(io::IO, e::MinimalityViolation)
 end
 
 """
-    check_minimal(puzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(puzzle))
+    check_minimal(puzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(puzzle); throw_error=true)::Bool
 Check that the clue `c` is not breaking the minimality of the `puzzle` clue set. I.e. that adding the additional clue is not necessary for finding the solution.
 """
-function check_minimal(z::ZebraPuzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(z))
+function check_minimal(
+    z::ZebraPuzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(z); throw_error=true
+)
     puzzle_assertions = assertions(z, exprs)
     status = sat!(puzzle_assertions) # populates the model with a solution -> we can get the model with values(exprs)
     @assert status == :SAT "Solver did not succeed with the current rules and clues. status = $status"
     @assert !any(isnothing.(value(exprs))) "Solved model was not created"
     # NOTE: Check whether the all the clues and rules are compatible with multiple solutions (i.e. any of the model
     # values is different) <11-06-25> 
-    return sat!(and(and(puzzle_assertions), or(exprs.exprs .!= value(exprs)))) == :SAT ||
-           throw(MinimalityViolation(c, Ref(z)))
+    if !(sat!(and(and(puzzle_assertions), or(exprs.exprs .!= value(exprs)))) == :SAT)
+        throw_error && throw(MinimalityViolation(c, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """

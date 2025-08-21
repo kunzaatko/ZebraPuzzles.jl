@@ -232,31 +232,52 @@ function cluehelp(z::SolvedZebraPuzzle, c::ExactRelativePosition)
 end
 
 """
-    check_valid(z::SolvedZebraPuzzle, c::Clue)
+    check_valid(z::SolvedZebraPuzzle, c::Clue; throw_error=true)::Bool
 Validate the truth of the clue against the solution table of the puzzle.
 
 !!! warning
-    It does not checked against the clues included in the puzzle.
+    It does not check against the clues included in the puzzle.
 """
-function check_valid(z::SolvedZebraPuzzle, c::DirectClue)
-    return (c.b in attributes(z, c.a)) == (c isa PositiveClue) ||
-           throw(InvalidClue(c, Ref(z)))
+function check_valid(z::SolvedZebraPuzzle, c::DirectClue; throw_error=true)
+    if !(c.b in attributes(z, c.a)) == (c isa PositiveClue)
+        throw_error && throw(InvalidClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
-function check_valid(z::SolvedZebraPuzzle, c::AbsolutePosition)
-    return (z.table[c.p, col(c.a)] == c.a) || throw(InvalidClue(c, Ref(z)))
+function check_valid(z::SolvedZebraPuzzle, c::AbsolutePosition; throw_error=true)
+    if !(z.table[c.p, col(c.a)] == c.a)
+        throw_error && throw(InvalidClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
-function check_valid(z::SolvedZebraPuzzle, c::AbsoluteDistance)
-    return abs(distance(z, c.a, c.b)) == c.d || throw(InvalidClue(c, Ref(z)))
-end
-function check_valid(z::SolvedZebraPuzzle, c::DirectionClue{<:Any,<:Any,D}) where {D}
-    pa, pb = position(z, c.a), position(z, c.b)
-    return (pa > pb) == (D == d_right) && pa != pb || throw(InvalidClue(c, Ref(z)))
+function check_valid(z::SolvedZebraPuzzle, c::AbsoluteDistance; throw_error=true)
+    if !(abs(distance(z, c.a, c.b)) == c.d)
+        throw_error && throw(InvalidClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
 function check_valid(
-    z::SolvedZebraPuzzle, c::ExactRelativePosition{<:Any,<:Any,D}
+    z::SolvedZebraPuzzle, c::DirectionClue{<:Any,<:Any,D}; throw_error=true
 ) where {D}
     pa, pb = position(z, c.a), position(z, c.b)
-    return (pa - pb) == (D == d_right ? c.r : -c.r) || throw(InvalidClue(c, Ref(z)))
+    if !((pa > pb) == (D == d_right) && pa != pb)
+        throw_error && throw(InvalidClue(c, Ref(z)))
+        return false
+    end
+    return true
+end
+function check_valid(
+    z::SolvedZebraPuzzle, c::ExactRelativePosition{<:Any,<:Any,D}; throw_error=true
+) where {D}
+    pa, pb = position(z, c.a), position(z, c.b)
+    if !((pa - pb) == (D == d_right ? c.r : -c.r))
+        throw_error && throw(InvalidClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """

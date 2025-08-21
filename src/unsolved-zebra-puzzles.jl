@@ -151,7 +151,7 @@ function Base.showerror(io::IO, e::ConflictingClue)
 end
 
 """
-    check_valid(z::UnsolvedZebraPuzzle, c::Clue, exprs=AttributeExprs(z))
+    check_valid(z::UnsolvedZebraPuzzle, c::Clue, exprs=AttributeExprs(z); throw_error=true)::Bool
 Validate the truth of the clue under the assertion of puzzle rules and the current puzzle clues.
 
 ```jldoctest
@@ -183,10 +183,16 @@ ERROR: ConflictingClue: clue House("red") ⟹ Pet("horse") is in conflict with t
 ```
 """
 function check_valid(
-    z::UnsolvedZebraPuzzle, c::Clue, exprs::AttributeExprs=AttributeExprs(z)
+    z::UnsolvedZebraPuzzle,
+    c::Clue,
+    exprs::AttributeExprs=AttributeExprs(z);
+    throw_error=true,
 )
-    return sat!(and(expr(c, exprs), and(assertions(z, exprs)))) == :SAT ||
-           throw(ConflictingClue(c, Ref(z)))
+    if !(sat!(and(expr(c, exprs), and(assertions(z, exprs)))) == :SAT)
+        throw_error && throw(ConflictingClue(c, Ref(z)))
+        return false
+    end
+    return true
 end
 
 """
