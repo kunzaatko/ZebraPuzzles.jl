@@ -13,7 +13,6 @@ This page provides a reference for the modules, functions, and types in ZebraPuz
 
 ## Functions
 
-- [`ZebraPuzzle`](@ref): Constructor for creating a new zebra puzzle.
 - [`add_clues!`](@ref): Add clues to a puzzle.
 - [`add_clue!`](@ref): Add a single clue to a puzzle.
 - [`attributes`](@ref): Get the attributes of a puzzle.
@@ -24,12 +23,13 @@ This page provides a reference for the modules, functions, and types in ZebraPuz
 
 ## Types
 
+- [`ZebraPuzzle`](@ref): Abstract type for any zebra puzzle.
+  - [`SolvedZebraPuzzle`](@ref): A solved zebra puzzle.
+  - [`UnsolvedZebraPuzzle`](@ref): An unsolved zebra puzzle.
 - [`Attribute`](@ref): Abstract type for all attributes.
 - [`Clue`](@ref): Abstract type for all clues.
-- [`DirectClue`](@ref): A direct association between two attributes.
-- [`PositionClue`](@ref): A clue that specifies the position of an attribute.
-- [`SolvedZebraPuzzle`](@ref): A solved zebra puzzle.
-- [`UnsolvedZebraPuzzle`](@ref): An unsolved zebra puzzle.
+  - [`DirectClue`](@ref): A direct association between two attributes.
+  - [`PositionClue`](@ref): A clue that specifies the position of an attribute.
 
 ```@autodocs
 Modules = [ZebraPuzzles]
