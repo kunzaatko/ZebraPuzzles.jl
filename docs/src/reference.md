@@ -1,5 +1,6 @@
 ```@meta
 CurrentModule = ZebraPuzzles
+CollapsedDocstrings = true
 ```
 
 # API Reference

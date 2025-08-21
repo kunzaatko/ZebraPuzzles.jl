@@ -1,3 +1,8 @@
+```@meta 
+CurrentModule = ZebraPuzzles
+CollapsedDocStrings = true
+```
+
 # ZebraPuzzles.jl 🦓
 Welcome to the documentation for [`ZebraPuzzles.jl`](https://github.com/kunzaatko/ZebraPuzzles.jl)!
 
