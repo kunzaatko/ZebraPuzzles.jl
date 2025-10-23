@@ -109,12 +109,12 @@ function Base.show(io::IO, ::MIME"text/plain", z::UnsolvedZebraPuzzle)
             string(k) => v for (k, v) in ((k, z.attr_variants[k]) for k in attrtypes(z))
         );
         alignment=:c,
-        hlines=:all,
-        vlines=[0, :end],
-        show_header=false,
-        show_subheader=false,
-        formatters=(v, _, j) -> j == 2 ? join(map(string, v), ", ") : v,
-        highlighters=Highlighter((_, _, j) -> j == 1, Crayons.crayon"yellow bold"),
+        show_column_labels=false,
+        table_format=TextTableFormat(;
+            vertical_lines_at_data_columns=:none, horizontal_lines_at_data_rows=:all
+        ),
+        formatters=[(v, _, j) -> j == 2 ? join(map(string, v), ", ") : v],
+        highlighters=[TextHighlighter((_, _, j) -> j == 1, Crayons.crayon"yellow bold")],
     )
     if !isempty(z.clues)
         printstyled(io, "\nclues:\n"; bold=true, underline=true)
@@ -309,6 +309,14 @@ function solve!(puzzle::UnsolvedZebraPuzzle)
     status = sat!(assertions(puzzle, exprs))
     if status != :SAT
         error(lazy"Failed to find the solution. Got `$status` from the solver.")
+    end
+    has_unique_solution(puzzle) || begin
+        @warn """\
+        The puzzle does not have a unique solution with the current clues! Truth table contains a single solution compliant with the puzzle clues.
+        """
+        @info """\
+        When you add new clues, you have to call `solve!` again to get a compatible solution...
+        """
     end
     foreach(attributes(puzzle)) do a
         puzzle.table[value(exprs[a]), col(a)] = a

@@ -170,11 +170,12 @@ function Base.show(io::IO, ::MIME"text/plain", z::SolvedZebraPuzzle; cluenumber=
         io,
         z.table;
         alignment=:c,
-        hlines=:all,
-        vlines=[0, :end],
-        header_crayon=crayon"yellow bold",
-        show_subheader=false,
-        formatters=(attr, _, _) -> string(attr),
+        column_labels=[names(z.table)],
+        table_format=TextTableFormat(;
+            horizontal_lines_at_data_rows=:all, vertical_lines_at_data_columns=:none
+        ),
+        style=TextTableStyle(; first_line_column_label=crayon"yellow bold"),
+        formatters=[(attr, _, _) -> string(attr)],
     )
     if !isempty(z.clues)
         printstyled(io, "\nclues:\n"; bold=true, underline=true)
