@@ -180,6 +180,12 @@ clues:
 julia> ZP.check_valid(puzzle, Clue(House("red"), Pet("horse")))
 ERROR: ConflictingClue: clue House("red") ⟹ Pet("horse") is in conflict with the current rules/clues in the puzzle.
 [...]
+
+julia> ZP.check_valid(puzzle, Clue(House("blue"), Pet("horse")))
+true
+
+julia> ZP.check_valid(puzzle, Clue(House("ivory"), Pet("horse")); throw_error=false)
+false
 ```
 """
 function check_valid(
@@ -267,6 +273,32 @@ end
 """
     show_solution(puzzle::UnsolvedZebraPuzzle)
 If the puzzle was solved by `solve!`, converts the puzzle to a [`SolvedZebraPuzzle`](@ref) shows it.
+
+```jldoctest
+julia> puzzle = ZP.UNSOLVED_EINSTEINS_ZEBRA |> deepcopy;
+
+julia> ZP.show_solution(puzzle)
+ERROR: UnsolvedPuzzle: puzzle is not solved
+[...]
+
+julia> solve!(puzzle);
+
+julia> ZP.show_solution(puzzle)
+SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}}
+┌──────────────────────────────────────────────────────────┐
+│    Drink      House   Nationality   Pet        Smoke     │
+├──────────────────────────────────────────────────────────┤
+│    water      yellow   Norwegian    fox        Kools     │
+├──────────────────────────────────────────────────────────┤
+│     tea        blue    Ukrainian   horse   Chesterfields │
+├──────────────────────────────────────────────────────────┤
+│     milk       red    Englishman   snails    Old Gold    │
+├──────────────────────────────────────────────────────────┤
+│ orange juice  ivory    Spaniard     dog    Lucky Strike  │
+├──────────────────────────────────────────────────────────┤
+│    coffee     green    Japanese    zebra    Parliaments  │
+└──────────────────────────────────────────────────────────┘
+```
 """
 function show_solution(puzzle::UnsolvedZebraPuzzle)
     if issolved(puzzle)
@@ -303,12 +335,27 @@ SolvedZebraPuzzle{5, 5, NTuple{5, Union{Missing, ZebraPuzzles.Attribute}}}
 │    coffee     green    Japanese    zebra    Parliaments  │
 └──────────────────────────────────────────────────────────┘
 ```
+
+If the puzzle is not solvable an error is thrown
+
+```jldoctest
+julia> puz = ZP.UNSOLVED_EINSTEINS_ZEBRA |> deepcopy;
+
+julia> pop!(puz.clues) |> ZP.phrase
+"The Norwegian lives immediately next to the blue house."
+
+julia> push!(puz.clues, ExactRelativePosition(Nationality("Norwegian"), House("yellow"), 1));
+
+julia> solve!(puz);
+ERROR: Failed to find a solution. Got `UNSAT` from the solver.
+[...]
+```
 """
 function solve!(puzzle::UnsolvedZebraPuzzle)
     exprs = AttributeExprs(puzzle)
     status = sat!(assertions(puzzle, exprs))
     if status != :SAT
-        error(lazy"Failed to find the solution. Got `$status` from the solver.")
+        error(lazy"Failed to find a solution. Got `$status` from the solver.")
     end
     has_unique_solution(puzzle) || begin
         @warn """\
