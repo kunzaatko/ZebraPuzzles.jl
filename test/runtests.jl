@@ -1,4 +1,4 @@
-using Mocking, DataFrames, PrettyTables
+using Mocking, DataFrames, PrettyTables, Logging
 using ZebraPuzzles
 using ZebraPuzzles: ZebraPuzzles as ZP
 using Test, Aqua, Documenter, CompatHelperLocal
@@ -66,14 +66,14 @@ end
         # NOTE: Better than doc-testing in `../docs/make.jl` because, I can track the coverage
         # NOTE: When updating, must update also in `../docs/make.jl` <30-05-25> 
         DocMeta.setdocmeta!(ZebraPuzzles, :DocTestSetup, :(
-                include(joinpath(@__DIR__, "doctestsetup.jl"));
-                # NOTE: Not necessary in `docs/make.jl`. `@warn` should work there <30-05-25> 
-                using Logging;
-                Logging.disable_logging(Logging.Warn)
+                include(joinpath(@__DIR__, "doctestsetup.jl"))
+            # NOTE: Not necessary in `docs/make.jl`. `@warn` should work there <30-05-25> 
             ); recursive=true)
         !haskey(ENV, "FIX_DOCTESTS") && @info "You can fix doctests by setting `ENV[\"FIX_DOCTESTS\"] = true`."
-        apply(pretty_tables_patch) do
-            doctest(ZebraPuzzles; fix=ifelse(haskey(ENV, "FIX_DOCTESTS"), true, false))
+        with_logger(Logging.SimpleLogger(stdout, Logging.Error)) do
+            apply(pretty_tables_patch) do
+                doctest(ZebraPuzzles; fix=ifelse(haskey(ENV, "FIX_DOCTESTS"), true, false))
+            end
         end
     end
 
@@ -108,7 +108,7 @@ end
     @cond_testset "unsolved" begin
         include("unsolved.jl")
     end
-    
+
     @cond_testset "questions" begin
         include("questions.jl")
     end
