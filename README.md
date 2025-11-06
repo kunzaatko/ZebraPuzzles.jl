@@ -36,7 +36,24 @@ puzzle = ZebraPuzzle(
   Pet => ("dog", "horse", "snails", "zebra", "fox"),
   Smoke => ("Chesterfields", "Lucky Strike", "Old Gold", "Parliaments", "Kools"),
 )
+```
 
+<pre class="terminal">
+UnsolvedZebraPuzzle{5, 5, Tuple{Drink, House, Nationality, Pet, Smoke}} with no clues
+┌────────────────────────────────────────────────────────────────────────┐
+│<span style='color:var(--yellow,#a60)'><b>    Drink    </b></span>          coffee, milk, orange juice, tea, water           │
+├────────────────────────────────────────────────────────────────────────┤
+│<span style='color:var(--yellow,#a60)'><b>    House    </b></span>              blue, green, ivory, red, yellow              │
+├────────────────────────────────────────────────────────────────────────┤
+│<span style='color:var(--yellow,#a60)'><b> Nationality </b></span>   Englishman, Japanese, Spaniard, Ukrainian, Norwegian    │
+├────────────────────────────────────────────────────────────────────────┤
+│<span style='color:var(--yellow,#a60)'><b>     Pet     </b></span>              dog, horse, snails, zebra, fox               │
+├────────────────────────────────────────────────────────────────────────┤
+│<span style='color:var(--yellow,#a60)'><b>    Smoke    </b></span> Chesterfields, Lucky Strike, Old Gold, Parliaments, Kools │
+└────────────────────────────────────────────────────────────────────────┘
+</pre>
+
+```julia
 # Add clues
 add_clues!(puzzle, [
   Clue(Nationality("Englishman"), House("red")),                  # The Englishman lives in the red house.
@@ -54,7 +71,28 @@ add_clues!(puzzle, [
   Clue(Nationality("Japanese"), Smoke("Parliaments")),            # The Japanese smokes Parliaments.
   AbsoluteDistance(Nationality("Norwegian"), House("blue"), 1),   # The Norwegian lives next to the blue house.
 ])
+riddle(puzzle)
+```
 
+> There are 5 houses.
+> 
+>   * The Englishman lives in the red house.
+>   * The Spaniard is the owner of the dog.
+>   * The man who drinks coffee lives in the green house.
+>   * The Ukrainian is a drinker of tea.
+>   * The green house is immediately to the right of the ivory house.
+>   * The man who smokes Old Gold is the owner of the snails.
+>   * The smoker of Kools lives in the yellow house.
+>   * The man who drinks milk lives in the middle house.
+>   * The Norwegian lives in the first house.
+>   * The man who smokes Chesterfields lives immediately next to the man who owns the fox.
+>   * The smoker of Kools lives immediately next to the person who owns the horse.
+>   * The man who smokes Lucky Strike drinks orange juice.
+>   * The Japanese smokes Parliaments.
+>   * The Norwegian lives immediately next to the blue house.
+
+
+```
 # Solve the puzzle
 solve!(puzzle)
 
@@ -108,10 +146,10 @@ riddle(puzzle)  # Returns human-readable clue descriptions
 
 - `ZebraPuzzle()`: Create puzzles from attributes or a truth table
 - `add_clue!()`, `add_clues!()`: Add clues to puzzles
-- `solve!()`: Find the unique solution
+- `solve!()`: Find a solution
 - `fill_clues!()`: Fill to a minimal set of random clues for solubility
 - `riddle()`: Convert to natural language
-- `show_solution()`: Display the solved truth table
+- `show_solution()`: Display the solved puzzle
 
 See the [documentation](https://kunzaatko.github.io/ZebraPuzzles.jl/) for complete API reference and examples.
 
