@@ -75,7 +75,7 @@ riddle(puzzle)
 ```
 
 > There are 5 houses.
-> 
+>
 >   * The Englishman lives in the red house.
 >   * The Spaniard is the owner of the dog.
 >   * The man who drinks coffee lives in the green house.
@@ -109,7 +109,7 @@ show_solution(puzzle)
 
 ## Usage Examples
 
-### Creating a Solved Puzzle
+Creating a solved puzzle:
 
 ```julia
 solved_puzzle = ZebraPuzzle(
@@ -121,14 +121,14 @@ solved_puzzle = ZebraPuzzle(
 )
 ```
 
-### Adding Position-Based Clues
+Adding position-based clues:
 
 ```julia
 add_clue!(puzzle, AbsoluteDistance(Smoke("Chesterfields"), Pet("fox"), 1))
 add_clue!(puzzle, ExactRelativePosition(House("green"), House("ivory"), 1))
 ```
 
-### Generating Random Puzzles
+Generating random puzzles:
 
 ```julia
 using Random
@@ -136,7 +136,7 @@ Random.seed!(42)
 random_puzzle = rand(UnsolvedZebraPuzzle{3,4})  # 4 subjects, 3 attributes each
 ```
 
-### Converting to Natural Language
+Riddling in _natural language_:
 
 ```julia
 riddle(puzzle)  # Returns human-readable clue descriptions
