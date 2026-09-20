@@ -8,6 +8,8 @@ default:
 
 set script-interpreter := ["julia", "--color", "yes", "--project"]
 
+root-dir := justfile_directory()
+
 puzzle := """
 puzzle = ZebraPuzzle(
     Drink => ("coffee", "milk", "orange juice", "tea", "water"),
@@ -61,3 +63,10 @@ readme-puzzle-riddle:
 [group("docs")]
 readme-puzzle-html:
     to-html "just readme-puzzle" --no-prompt
+
+[doc("Generate and open the package documenation")]
+[group("docs")]
+[working-directory(root-dir)]
+docs:
+    julia --project=docs --color=yes docs/make.jl
+    xdg-open docs/build/index.html
