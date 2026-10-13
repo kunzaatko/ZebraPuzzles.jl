@@ -7,7 +7,7 @@ const run_all = isempty(ARGS) ? true : false
 
 skip = Dict{String,Bool}(
     "aqua" => !haskey(ENV, "GITHUB_ACTIONS") && !haskey(ENV, "RUNTESTS_FULL"),
-    "doctests" => !haskey(ENV, "RUNTESTS_FULL") && !haskey(ENV, "GITHUB_ACTIONS"),
+    "doctests" => !haskey(ENV, "RUNTESTS_FULL"),
     "ambiguities" => true
 )
 
