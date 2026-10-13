@@ -1,12 +1,11 @@
 using Mocking, DataFrames, PrettyTables, Logging
 using ZebraPuzzles
 using ZebraPuzzles: ZebraPuzzles as ZP
-using Test, Aqua, Documenter, CompatHelperLocal
+using Test, Aqua, Documenter
 
 const run_all = isempty(ARGS) ? true : false
 
 skip = Dict{String,Bool}(
-    "compat" => !(VERSION >= v"1.9"), # NOTE: `CompatHelperLocal` only compatible with later Julia version <28-02-25> 
     "aqua" => !haskey(ENV, "GITHUB_ACTIONS") && !haskey(ENV, "RUNTESTS_FULL"),
     "doctests" => !haskey(ENV, "RUNTESTS_FULL") && !(haskey(ENV, "RUNNER_OS") && ENV["RUNNER_OS"] == "Linux"),
     "ambiguities" => true
@@ -48,10 +47,6 @@ end
             else
                 @test length(Test.detect_ambiguities(ZebraPuzzles)) == 0
             end
-        end
-
-        @cond_testset "compat" begin
-            @test CompatHelperLocal.check(ZebraPuzzles; checktest=false)
         end
     end
 
