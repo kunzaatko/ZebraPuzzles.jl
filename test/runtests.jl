@@ -6,8 +6,8 @@ using Test, Aqua, Documenter
 const run_all = isempty(ARGS) ? true : false
 
 skip = Dict{String,Bool}(
-    "aqua" => !haskey(ENV, "GITHUB_ACTIONS") && !haskey(ENV, "RUNTESTS_FULL"),
-    "doctests" => !haskey(ENV, "RUNTESTS_FULL"),
+    "aqua" => !haskey(ENV, "GITHUB_ACTIONS") && !haskey(ENV, "RUNTESTS_FULL"), # We want to run the quality gates in the CI and if explicitly requested
+    "doctests" => haskey(ENV, "GITHUB_ACTIONS"),
     "ambiguities" => true
 )
 
