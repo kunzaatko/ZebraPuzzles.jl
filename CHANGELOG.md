@@ -1,5 +1,80 @@
 # Changelog
 
+## [0.3.0] - 2026-10-15
+
+### 🚀 Features
+
+- *(docs)* Add favicon to the documentation page by @kunzaatko
+
+- *(docs)* Collapse the docstrings by @kunzaatko
+
+- *(check)* Add `throw_error` keyword argument by @kunzaatko
+
+- *(release)* Automate versioned package registration
+
+
+### 🐛 Bug Fixes
+
+- *(CI)* Remove the unnecessary develop of the package by @kunzaatko
+
+- *(docs)* Falsely documented `ZebraPuzzle` as a function instead of type by @kunzaatko
+
+- *(test)* Avoid duplicate clues in test for MinimalityViolation by @kunzaatko
+
+- Update PrettyTables and warn when solution given with `solve!` is not unique by @kunzaatko
+
+
+### 💼 Other
+
+- Support Julia 1.12 by @kunzaatko
+
+- Add Just recipes for documentation generation by @kunzaatko
+
+- *(docs)* Add recipe to build and open documentation by @kunzaatko
+
+- Configure Julia workspace and support Julia 1.13 by @kunzaatko
+
+- Add Just recipes for tests and Julia environments by @kunzaatko
+
+
+### 🚜 Refactor
+
+- Remove the `;` from doctestsetup by @kunzaatko
+
+
+### 📚 Documentation
+
+- *(README)* Add a demo and some basic information about the package by @kunzaatko
+
+- Add more examples with failing `solve!` and `show_solution` without solution by @kunzaatko
+
+- *(README)* Update the example with output by @kunzaatko
+
+- Clarify README usage headings by @kunzaatko
+
+- Add project changelog
+
+
+### 🧪 Testing
+
+- Update doctest platform skip condition by @kunzaatko
+
+- Run doctests in CI only by @kunzaatko
+
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deps)* Move Julia updates to Dependabot by @kunzaatko
+
+- Drop architecture matrix and adjust doctest gating by @kunzaatko
+
+- Set CI matrix architecture to x64 by @kunzaatko
+
+- Simplify Julia test matrix configuration by @kunzaatko
+
+- Test on x64 and aarch64 architectures by @kunzaatko
+
+
 ## [0.2.3] - 2025-08-06
 
 ### 🐛 Bug Fixes
