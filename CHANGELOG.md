@@ -12,7 +12,7 @@
 
 - *(release)* Automate versioned package registration by @kunzaatko
 
-- *(export)* Add validated JSON-compatible puzzle records
+- *(export)* Add validated JSON-compatible puzzle records by @kunzaatko
 
 
 ### 🐛 Bug Fixes
@@ -29,7 +29,7 @@
 
 - *(release)* Sign annotated release tags by @kunzaatko
 
-- *(release)* Correct version in bump progress message
+- *(release)* Correct version in bump progress message by @kunzaatko
 
 
 ### 💼 Other
