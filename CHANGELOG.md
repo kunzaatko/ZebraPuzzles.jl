@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0] - 2026-10-15
+## [0.3.0] - 2026-11-22
 
 ### 🚀 Features
 
@@ -10,7 +10,9 @@
 
 - *(check)* Add `throw_error` keyword argument by @kunzaatko
 
-- *(release)* Automate versioned package registration
+- *(release)* Automate versioned package registration by @kunzaatko
+
+- *(export)* Add validated JSON-compatible puzzle records
 
 
 ### 🐛 Bug Fixes
@@ -22,6 +24,12 @@
 - *(test)* Avoid duplicate clues in test for MinimalityViolation by @kunzaatko
 
 - Update PrettyTables and warn when solution given with `solve!` is not unique by @kunzaatko
+
+- *(release)* Use package version in registration recipe by @kunzaatko
+
+- *(release)* Sign annotated release tags by @kunzaatko
+
+- *(release)* Correct version in bump progress message
 
 
 ### 💼 Other
@@ -52,7 +60,7 @@
 
 - Clarify README usage headings by @kunzaatko
 
-- Add project changelog
+- Add project changelog by @kunzaatko
 
 
 ### 🧪 Testing
@@ -73,6 +81,10 @@
 - Simplify Julia test matrix configuration by @kunzaatko
 
 - Test on x64 and aarch64 architectures by @kunzaatko
+
+- Restrict CI matrix to x64 architecture by @kunzaatko
+
+- *(release)* Remove diagram and TagBot workflows by @kunzaatko
 
 
 ## [0.2.3] - 2025-08-06
