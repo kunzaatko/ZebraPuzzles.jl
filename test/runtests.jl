@@ -107,6 +107,10 @@ end
     @cond_testset "questions" begin
         include("questions.jl")
     end
+
+    @cond_testset "export" begin
+        include("export.jl")
+    end
 end
 
 if run_all

@@ -137,15 +137,17 @@ accumsubtypes(T::Type) = accumsubtypes!(T, Type[], Type[])
     Random.rand(UnsolvedZebraPuzzle{K,N}; clues=true)
 Generate a random unsolved zebra puzzle with `K` subjects each of which has `N` attributes.
 
-If `clues` is `true`, the puzzle is filled with a minimal set of random clues ensuring that it is solvable.
+If `clues` is `true`, the puzzle is filled with random clues until its rules and clues determine a
+unique solution, i.e. until adding any further clue would be unnecessary for finding the solution.
+This is _not_ a guarantee that none of the clues could be removed while keeping the solution.
 If `question` is `true`, the puzzle is accompanied with a random question about the puzzle.
 """
 function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true, question=true) where {K,N}
     attrs = [rand([House, Person])] # main attribute
     append!(
-        attrs, first(shuffle(filter(k -> !in(k, attrs), accumsubtypes(Attribute))), K - 1)
+        attrs, first(shuffle(filter(k -> !in(k, attrs), accumsubtypes(Attribute))), N - 1)
     )
-    puzzle = ZebraPuzzle(collect(attr => Tuple(rand(attr, N)) for attr in attrs)...)
+    puzzle = ZebraPuzzle(collect(attr => Tuple(rand(attr, K)) for attr in attrs)...)
     @info """
     Generated attributes:
     $(join(
@@ -168,5 +170,5 @@ end
     return puzzle
 end
 function Random.rand(::Type{UnsolvedZebraPuzzle}, K::Int, N::Int; clues=true, question=true)
-    return rand(UnsolvedZebraPuzzle{K,N}; clues)
+    return rand(UnsolvedZebraPuzzle{K,N}; clues, question)
 end

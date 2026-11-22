@@ -48,7 +48,7 @@ This internal index is used indexing into the [`AttributeExprs`](@ref) of the pu
 
 Every subtype of `ZebraPuzzle` must implement this interface.
 
-```jldoctests
+```jldoctest
 julia> ZP.indexof(ZP.EINSTEINS_ZEBRA, Smoke("Chesterfields"))
 (2, 3)
 

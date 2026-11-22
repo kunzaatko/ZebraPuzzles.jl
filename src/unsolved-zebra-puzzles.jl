@@ -34,7 +34,7 @@ const AttributeVariants = Pair{<:Type,<:Tuple{Attribute,Vararg{Attribute}}}
 Construct an unsolved zebra puzzle. The puzzle holds the variants of the attributes and a solution table with missing
 values. Clues can be later added by [`add_clues!`](@ref).
 
-```jldoctests
+```jldoctest
 julia> ZebraPuzzle(
                House => ("red", "blue", "green"), 
                Person => ("Martin", "David", "Lucas"), 
@@ -373,7 +373,14 @@ end
 
 """
     fill_clues!(puzzle::ZebraPuzzle)
-Add random clues until the puzzle has a minimal set and ensures a unique solution.
+Add random clues until the rules and clues of the puzzle determine a unique solution, i.e. until
+adding any further clue would be unnecessary for finding the solution.
+
+This is _not_ a guarantee that the clue set is irreducible: a clue that was necessary when it was
+added can be made redundant by the clues added after it, and no removal is tested.
+
+Unexpected errors (anything other than clue generation collisions) are propagated instead of being
+retried.
 
 ```julia-repl
 julia> z = ZebraPuzzle(
@@ -405,7 +412,8 @@ function fill_clues!(puzzle::ZebraPuzzle)
         catch e
             if e isa MinimalityViolation
                 return puzzle
-                break
+            elseif !(e isa ClueError) # `ClueError`s are collisions of the random clue generation -> retry
+                rethrow()
             end
         end
     end

@@ -12,8 +12,18 @@ Base.string(a::A) where {A<:Attribute} = getfield(a, 1)
 """
     id(a::Attribute)
 `Satisfiability` variable name.
+
+Spaces are dropped and non-ASCII characters are escaped to their hexadecimal code points (`uXXXX`)
+so that puzzles with e.g. Unicode attribute variants keep valid SMT-LIB symbols.
 """
-id(a::Attribute)::String = string(typeof(a)) * "_" * replace(string(a), ' ' => "")
+function id(a::Attribute)::String
+    name = string(typeof(a)) * "_"
+    for c in string(a)
+        c == ' ' && continue
+        name *= isascii(c) ? string(c) : "u" * string(UInt32(c); base=16, pad=4)
+    end
+    return name
+end
 
 """
     col(S::Type{<:Attribute})
