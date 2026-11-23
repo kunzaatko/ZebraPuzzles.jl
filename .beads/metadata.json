@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "ZebraPuzzles_jl",
+  "project_id": "2686f1b3-9b42-448a-b2d0-10d2dcc68927"
+}
