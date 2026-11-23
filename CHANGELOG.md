@@ -1,6 +1,31 @@
 # Changelog
 
-## [0.3.0] - 2026-11-22
+## [0.4.0] - 2026-11-23
+
+### 🚀 Features
+
+- *(export)* Add validated JSON-compatible puzzle records by @kunzaatko
+
+
+### 🐛 Bug Fixes
+
+- *(release)* Use package version in registration recipe by @kunzaatko
+
+- *(release)* Sign annotated release tags by @kunzaatko
+
+- *(release)* Correct version in bump progress message by @kunzaatko
+
+
+### ⚙️ Miscellaneous Tasks
+
+- Restrict CI matrix to x64 architecture by @kunzaatko
+
+- *(release)* Remove diagram and TagBot workflows by @kunzaatko
+
+- Remove minimum Julia version from test matrix by @kunzaatko
+
+
+## [0.3.0] - 2026-10-15
 
 ### 🚀 Features
 
@@ -12,8 +37,6 @@
 
 - *(release)* Automate versioned package registration by @kunzaatko
 
-- *(export)* Add validated JSON-compatible puzzle records by @kunzaatko
-
 
 ### 🐛 Bug Fixes
 
@@ -24,12 +47,6 @@
 - *(test)* Avoid duplicate clues in test for MinimalityViolation by @kunzaatko
 
 - Update PrettyTables and warn when solution given with `solve!` is not unique by @kunzaatko
-
-- *(release)* Use package version in registration recipe by @kunzaatko
-
-- *(release)* Sign annotated release tags by @kunzaatko
-
-- *(release)* Correct version in bump progress message by @kunzaatko
 
 
 ### 💼 Other
@@ -81,10 +98,6 @@
 - Simplify Julia test matrix configuration by @kunzaatko
 
 - Test on x64 and aarch64 architectures by @kunzaatko
-
-- Restrict CI matrix to x64 architecture by @kunzaatko
-
-- *(release)* Remove diagram and TagBot workflows by @kunzaatko
 
 
 ## [0.2.3] - 2025-08-06
