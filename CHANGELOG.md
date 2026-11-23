@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.1] - 2026-11-23
+
+### 🚀 Features
+
+- *(puzzles)* Add attribute types and car-themed riddles by @kunzaatko
+
+
+### ⚙️ Miscellaneous Tasks
+
+- *(release)* Restore changelog file output for release publishing by @kunzaatko
+
+
 ## [0.4.0] - 2026-11-23
 
 ### 🚀 Features
