@@ -21,6 +21,9 @@ jobs:
         with:
           config: cliff.toml
           args: -vv --latest --strip header --no-exec --github-repo ${{ github.repository }}
+        env:
+          OUTPUT: CHANGELOG.md
+
   publish-release:
     name: Publish release
     needs: generate-changelog
@@ -30,6 +33,7 @@ jobs:
         if: ${{ !contains(github.ref, '-') }}
         uses: svenstaro/upload-release-action@v2
         with:
+          file: CHANGELOG.md
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: true
           tag: ${{ github.ref }}
