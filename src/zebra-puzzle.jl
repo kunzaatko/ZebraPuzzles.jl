@@ -639,7 +639,7 @@ function riddle(
         else
             ""
         end
-        riddle_string *= prefix * phrase(c) * "\n"
+        riddle_string *= prefix * phrase(c, mainsubject) * "\n"
     end
 
     if !isempty(puzzle.questions)
@@ -653,10 +653,10 @@ function riddle(
                 else
                     ""
                 end
-                riddle_string *= prefix * phrase(q) * "\n"
+                riddle_string *= prefix * phrase(q, mainsubject) * "\n"
             end
         else
-            riddle_string *= phrase(puzzle.questions[1])
+            riddle_string *= phrase(puzzle.questions[1], mainsubject)
         end
     end
     quiet || print(Markdown.parse(riddle_string))
@@ -678,7 +678,10 @@ julia> ZP.answer(puz)
 ```
 """
 function answer(puzzle::ZebraPuzzle)
-    answers = phrase.(toclue(q, puzzle) for q in puzzle.questions)
+    subjects = filter(a -> a <: Subject, attrtypes(puzzle))
+    # puzzles without a subject-like attribute type keep the classic house phrasing
+    story = isempty(subjects) ? House : first(subjects)
+    answers = [phrase(toclue(q, puzzle), story) for q in puzzle.questions]
     if length(answers) == 1
         return answers[1]
     else

@@ -217,7 +217,7 @@ function puzzle_record(puzzle::UnsolvedZebraPuzzle)
     check(puzzle, question) # throws `AttributeTypeError`/`AttributeVariantError` for invalid questions
     any(a -> a <: Subject, attrtypes(puzzle)) || throw(ArgumentError(
         "Cannot export the puzzle: rendering the riddle requires an attribute type subtyping " *
-            "`Subject` (`House` or `Person`), got `$(attrtypes(puzzle))`."
+            "`Subject` (`House`, `Person` or `Car`), got `$(attrtypes(puzzle))`."
     ))
 
     solved = deepcopy(puzzle) # never mutate (or trust) the input puzzle and its stored table

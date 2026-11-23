@@ -7,7 +7,6 @@ See also [`EINSTEINS_ZEBRA`](@ref)
 struct Person <: Attribute
     name::String
 end
-isproper(::Type{Person}) = true
 
 attributed(d::Person) = ["$(string(d))"]
 attribution(d::Person) = ["is named $(d.name)"]

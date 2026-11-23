@@ -282,6 +282,59 @@ column_index(columns, name) = findfirst(==(name), columns)
         @test parsed["answer"]["value"] == "červený"
     end
 
+    @testset "car subject record" begin
+        puzzle = ZebraPuzzle(
+            Car => ("red", "blue", "green"),
+            Person => ("Martin", "David", "Lucas"),
+            Job => ("engineer", "teacher", "artist"),
+        )
+        add_clues!(
+            puzzle,
+            [
+                Clue(Person("Martin"), Car("red")),
+                Clue(Person("David"), Job("teacher")),
+                Clue(Person("Lucas"), Job("engineer")),
+                AbsolutePosition(Car("green"), 3, 3),
+                AbsolutePosition(Person("David"), 2, 3),
+            ],
+        )
+        add_question!(puzzle, PositionQuestion(Car("blue")))
+        record = puzzle_record(puzzle)
+        @test record["dimensions"] ==
+              Dict("subjects" => 3, "attribute_types" => 3, "clue_count" => 5)
+        @test occursin("There are 3 cars.", record["riddle"])
+        @test occursin(
+            r"At which position is the blue car|What is the position of the blue car",
+            record["riddle"],
+        )
+        @test record["question"]["subject"]["attribute_type"] == "Car"
+        @test record["answer"] == Dict("kind" => "position", "value" => 2)
+        @test record["solution"]["rows"] ==
+              [["red", "Martin", "artist"], ["blue", "David", "teacher"], ["green", "Lucas", "engineer"]]
+    end
+
+    @testset "string-valued attributes (Age)" begin
+        puzzle = ZebraPuzzle(
+            Person => ("Martin", "David"),
+            Age => ("30", "40"),
+        )
+        add_clues!(
+            puzzle,
+            [
+                Clue(Person("Martin"), Age("40")),
+                AbsolutePosition(Person("Martin"), 1, 2),
+            ],
+        )
+        add_question!(puzzle, AttributeQuestion{Age}(Person("David")))
+        record = puzzle_record(puzzle)
+        @test record["answer"] ==
+              Dict("kind" => "attribute", "attribute_type" => "Age", "value" => "30")
+        @test record["solution"]["rows"][1][2] == "40" # ages stay strings, not numbers
+        parsed = JSON.parse(JSON.json(record))
+        @test parsed["solution"]["rows"] == record["solution"]["rows"]
+        @test parsed["answer"]["value"] == "30"
+    end
+
     @testset "generated puzzle" begin
         Random.seed!(20260101)
         local generated

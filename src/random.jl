@@ -102,10 +102,34 @@ function Random.rand(::Type{AttributeQuestion{A,S}}, z::ZebraPuzzle) where {S,A}
     return AttributeQuestion{A,typeof(subject)}(subject)
 end
 function Random.rand(::Type{AttributeQuestion{A}}, z::ZebraPuzzle) where {A}
-    return rand(AttributeQuestion{A,rand(filter(!=(A), attrtypes(z)))}, z)
+    # avoid pairing subject-like attribute types with each other (questions such as "who is the
+    # green house?" are nonsensical) and person-centric attribute types (see `person_centric`) with
+    # location-like subjects (e.g. the job of a house)
+    candidates = filter(
+        t ->
+            t != A &&
+            !(A <: Subject && t <: Subject) &&
+            !(person_centric(A) && is_location(t)),
+        attrtypes(z),
+    )
+    isempty(candidates) && throw(ArgumentError(
+        "The attribute type `$A` cannot make a sensible attribute question about any of the other " *
+            "attribute types `$(filter(!=(A), attrtypes(z)))`.",
+    ))
+    return rand(AttributeQuestion{A,rand(candidates)}, z)
 end
 function Random.rand(::Type{AttributeQuestion}, z::ZebraPuzzle)
-    return rand(AttributeQuestion{rand(attrtypes(z))}, z)
+    # select a (requested type, subject type) pair whose question reads sensibly instead of
+    # falling back to an incoherent one
+    pairs = [
+        (A, S) for A in attrtypes(z) for S in attrtypes(z) if
+        S != A && !(A <: Subject && S <: Subject) && !(person_centric(A) && is_location(S))
+    ]
+    isempty(pairs) && throw(ArgumentError(
+        "The puzzle has no pair of attribute types that makes a sensible attribute question."
+    ))
+    A, S = rand(pairs)
+    return rand(AttributeQuestion{A,S}, z)
 end
 
 function Random.rand(::Type{PositionQuestion{A}}, z::ZebraPuzzle) where {A}
@@ -116,7 +140,14 @@ function Random.rand(::Type{PositionQuestion}, z::ZebraPuzzle)
 end
 function Random.rand(::Type{Question}, z::ZebraPuzzle)
     type = rand((PositionQuestion, AttributeQuestion))
-    return rand(type, z::ZebraPuzzle)
+    try
+        return rand(type, z)
+    catch e
+        # a puzzle whose attribute types make no sensible attribute question (e.g. only subject-like
+        # and person-centric types) still gets a position question
+        e isa ArgumentError || rethrow()
+        return rand(PositionQuestion, z)
+    end
 end
 
 function accumsubtypes!(T::Type, accum::Vector{Type}, left::Vector{Type})
@@ -143,10 +174,21 @@ This is _not_ a guarantee that none of the clues could be removed while keeping 
 If `question` is `true`, the puzzle is accompanied with a random question about the puzzle.
 """
 function Random.rand(::Type{UnsolvedZebraPuzzle{K,N}}; clues=true, question=true) where {K,N}
-    attrs = [rand([House, Person])] # main attribute
-    append!(
-        attrs, first(shuffle(filter(k -> !in(k, attrs), accumsubtypes(Attribute))), N - 1)
-    )
+    main = rand([House, Person, Car])
+    # `House` and `Car` are both location-like (see `is_location`) but tell different stories, so a
+    # generated puzzle contains at most one of them and the positional clue phrases stay coherent
+    excluded = if main == House
+        [Car]
+    elseif main == Car
+        [House]
+    else
+        location = rand([House, Car, nothing])
+        location isa Type ? [location == House ? Car : House] : [House, Car]
+    end
+    attrs = [main]
+    candidates =
+        shuffle(filter(k -> !in(k, attrs) && !in(k, excluded), accumsubtypes(Attribute)))
+    append!(attrs, first(candidates, N - 1))
     puzzle = ZebraPuzzle(collect(attr => Tuple(rand(attr, K)) for attr in attrs)...)
     @info """
     Generated attributes:
